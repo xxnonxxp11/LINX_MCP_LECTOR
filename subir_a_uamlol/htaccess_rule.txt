@@ -1,0 +1,10 @@
+# ==============================================================================
+# REGLA PARA TU ARCHIVO .htaccess EN uam.lol
+# ==============================================================================
+# Si quieres que la URL funcione como:
+# https://uam.lol/mcp (sin escribir .html)
+#
+# Solo añade estas 2 líneas al final de tu archivo .htaccess:
+
+RewriteEngine On
+RewriteRule ^mcp/?$ mcp.html [L]

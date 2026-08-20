@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINX_MCP_LECTOR — Android Stealth Memory Bridge & AI Controller | uam.lol/mcp</title>
+    <meta name="description" content="Puente de memoria externo indetectable para Android ARM64 con Overlay Vulkan nativo y protocolo MCP para Inteligencias Artificiales.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --bg-card: rgba(15, 23, 42, 0.7);
+            --bg-card-hover: rgba(26, 38, 66, 0.85);
+            --border: rgba(56, 189, 248, 0.2);
+            --border-glow: rgba(0, 240, 255, 0.5);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --cyan: #00f0ff;
+            --blue: #38bdf8;
+            --purple: #a855f7;
+            --pink: #ec4899;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --font-head: 'Outfit', 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(140px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.28;
+        }
+
+        .glow-1 {
+            top: -120px;
+            left: -100px;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, var(--cyan), transparent 70%);
+        }
+
+        .glow-2 {
+            top: 45%;
+            right: -120px;
+            width: 750px;
+            height: 750px;
+            background: radial-gradient(circle, var(--purple), transparent 70%);
+        }
+
+        .glow-3 {
+            bottom: -100px;
+            left: 25%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--blue), transparent 70%);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(7, 10, 18, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: var(--font-head);
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-logo .accent {
+            color: var(--cyan);
+            text-shadow: 0 0 14px rgba(0, 240, 255, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        .btn-git {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid var(--cyan);
+            color: var(--cyan) !important;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .btn-git:hover {
+            background: var(--cyan);
+            color: #000 !important;
+            box-shadow: 0 0 24px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 90px 0 60px;
+            text-align: center;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 18px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--blue);
+            margin-bottom: 24px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.3); }
+        }
+
+        .hero h1 {
+            font-family: var(--font-head);
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .grad-text {
+            background: linear-gradient(135deg, #00f0ff 0%, #38bdf8 45%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 35px rgba(0, 240, 255, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 36px;
+            line-height: 1.7;
+        }
+
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: var(--font-head);
+        }
+
+        .btn-cyan {
+            background: linear-gradient(135deg, #00f0ff, #0284c7);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-cyan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 32px rgba(0, 240, 255, 0.7);
+        }
+
+        .btn-dark {
+            background: rgba(30, 41, 59, 0.8);
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .btn-dark:hover {
+            background: rgba(51, 65, 85, 0.9);
+            border-color: var(--cyan);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 30px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 22px;
+            border-radius: 14px;
+            backdrop-filter: blur(14px);
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .stat-box:hover {
+            border-color: var(--cyan);
+        }
+
+        .stat-val {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--cyan);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Section Commons */
+        .section {
+            padding: 90px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-alt {
+            background: rgba(15, 23, 42, 0.4);
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .sec-head {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 50px;
+        }
+
+        .sec-tag {
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .sec-head h2 {
+            font-family: var(--font-head);
+            font-size: 2.3rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .sec-head p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Architecture Visualizer */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .arch-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+        }
+
+        .arch-card:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .arch-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .arch-emoji {
+            font-size: 2.2rem;
+        }
+
+        .arch-head h3 {
+            font-family: var(--font-head);
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .arch-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--cyan);
+        }
+
+        .arch-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .arch-list li {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .arch-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--cyan);
+            font-weight: bold;
+        }
+
+        .arch-list code {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--cyan);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .feat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.25s ease;
+        }
+
+        .feat-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feat-icon {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+        }
+
+        .feat-card h3 {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .feat-card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        /* Tool Catalog */
+        .tool-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(14px);
+        }
+
+        .tool-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+        }
+
+        .tool-btn {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tool-btn:hover {
+            color: #fff;
+            border-color: var(--cyan);
+        }
+
+        .tool-btn.active {
+            background: var(--cyan);
+            color: #000;
+            border-color: var(--cyan);
+            font-weight: 700;
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+        }
+
+        .tool-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .t-card {
+            background: rgba(10, 14, 23, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 18px;
+            border-radius: 10px;
+            transition: border-color 0.2s;
+        }
+
+        .t-card:hover {
+            border-color: var(--blue);
+        }
+
+        .t-name {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .t-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Steps */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            position: relative;
+        }
+
+        .step-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            font-family: var(--font-head);
+        }
+
+        .step-card h3 {
+            font-family: var(--font-head);
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .code-box {
+            background: #060910;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 14px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #38bdf8;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--cyan);
+            color: #000;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.06));
+            border-top: 1px solid var(--border);
+        }
+
+        .cta h2 {
+            font-family: var(--font-head);
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .cta p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 680px;
+            margin: 0 auto 30px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #05070c;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 32px 0;
+        }
+
+        .foot-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .foot-brand {
+            font-family: var(--font-head);
+            font-weight: 900;
+            color: var(--cyan);
+            font-size: 1.15rem;
+        }
+
+        .foot-links {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .foot-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .foot-links a:hover {
+            color: var(--cyan);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--cyan);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.4rem; }
+            .nav-links a:not(.btn-git) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="https://uam.lol/mcp" class="brand-logo">
+                <span>⚡</span>
+                <span>LINX <span class="accent">MCP LECTOR</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="#arquitectura">Arquitectura</a>
+                <a href="#capacidades">Capacidades</a>
+                <a href="#herramientas">Tools MCP</a>
+                <a href="#guia">Inicio Rápido</a>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-git">
+                    <span>🐙 GitHub Repo</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge-pill">
+                <span class="pulse-dot"></span>
+                <span>OPEN SOURCE RELEASE & COMMUNITY EDITION</span>
+                <span style="background: rgba(0,240,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #fff;">v2.0 ARM64</span>
+            </div>
+
+            <h1>
+                Control de Memoria en Android <br>
+                <span class="grad-text">Potenciado por Inteligencia Artificial</span>
+            </h1>
+
+            <p>
+                Puente externo indetectable (Zero-Injection) para Android ARM64 con renderizado acelerado por <strong>Vulkan 1.1 + ImGui</strong>, Web Dashboard en tiempo real y protocolo <strong>MCP</strong> para Antigravity IDE, Claude, Gemini y GPT.
+            </p>
+
+            <div class="hero-btns">
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-main btn-cyan">
+                    <span>🐙 Clonar en GitHub</span>
+                </a>
+                <a href="#guia" class="btn-main btn-dark">
+                    <span>🚀 Guía de Inicio</span>
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-val">0%</span>
+                    <span class="stat-desc">Inyección en Juego (Pure /proc/mem)</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">120 FPS</span>
+                    <span class="stat-desc">Vulkan 1.1 Native Surface Overlay</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">30+</span>
+                    <span class="stat-desc">Herramientas MCP para IA (JSON-RPC)</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">1-Click</span>
+                    <span class="stat-desc">Ejecución Root con MT Manager (777)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Visualizer -->
+    <section class="section" id="arquitectura">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-tag">DISEÑO TÉCNICO</span>
+                <h2>Arquitectura de 3 Capas en Tiempo Real</h2>
+                <p>Integración limpia entre el kernel de Android, el puente en Node.js y los modelos de lenguaje.</p>
+            </div>
+
+            <div class="arch-grid">
+                <!-- Mobile -->
+                <div class="arch-card">
+                    <div class="arch-head">
+                        <span class="arch-emoji">📱</span>
+                        <div>
+                            <h3>1. Celular Android Root</h3>
+                            <span class="arch-badge">mem_server.sh (C++ ARM64)</span>
+                        </div>
+                    </div>
+                    <ul class="arch-list">
+                        <li>Acceso por <code>/proc/&lt;pid&gt;/mem</code> y syscalls <code>SYS_vm_readv</code> (270).</li>
+                        <li>Socket Unix <code>@memsvc</code> invisible en escaneos TCP.</li>
+                        <li>Overlay Vulkan + ImGui nativo a 120 FPS.</li>
+                        <li>Reparador de ELF (<code>libUE4.so</code>) para IDA Pro / Ghidra.</li>
+                    </ul>
+                </div>
+
+                <!-- PC -->
+                <div class="arch-card">
+                    <div class="arch-head">
+                        <span class="arch-emoji">💻</span>
+                        <div>
+                            <h3>2. Cliente PC & Dashboard</h3>
+                            <span class="arch-badge">Express & WS en :3000</span>
+                        </div>
+                    </div>
+                    <ul class="arch-list">
+                        <li>Túnel ADB Stealth (<code>tcp:8088 ➔ localabstract:memsvc</code>).</li>
+                        <li>Dashboard con 13 pestañas de inspección, radar y parches.</li>
+                        <li>Escáner de punteros y firmas AOB (Pattern Scanner).</li>
+                        <li>Gestor remoto de archivos con compresión ZIP/TAR.</li>
+                    </ul>
+                </div>
+
+                <!-- AI -->
+                <div class="arch-card">
+                    <div class="arch-head">
+                        <span class="arch-emoji">🤖</span>
+                        <div>
+                            <h3>3. Servidor MCP (IA)</h3>
+                            <span class="arch-badge">Antigravity / Claude / Gemini</span>
+                        </div>
+                    </div>
+                    <ul class="arch-list">
+                        <li>30+ herramientas estandarizadas JSON-RPC.</li>
+                        <li>Extracción de jugadores y coordenadas 3D de partida.</li>
+                        <li>Calibración en caliente de offsets sin reiniciar el juego.</li>
+                        <li>Control del HUD visual del teléfono en tiempo real.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Capabilities -->
+    <section class="section section-alt" id="capacidades">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-tag">CAPACIDADES</span>
+                <h2>¿Qué hace único a LINX_MCP_LECTOR?</h2>
+                <p>Diseñado para ser indetectable, ultra rápido y extensible por la comunidad.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feat-card">
+                    <div class="feat-icon">🛡️</div>
+                    <h3>Evasión Stealth (Zero-Injection)</h3>
+                    <p>No inyecta librerías <code>.so</code> ni modifica el APK. La lectura de memoria se ejecuta mediante syscalls directas de forma totalmente externa.</p>
+                </div>
+
+                <div class="feat-card">
+                    <div class="feat-icon">🔒</div>
+                    <h3>Unix Abstract Socket (@memsvc)</h3>
+                    <p>No abre puertos TCP visibles en <code>/proc/net/tcp</code>. El socket de dominio Unix abstracto es invisible para los escaneos de red del anti-cheat.</p>
+                </div>
+
+                <div class="feat-card">
+                    <div class="feat-icon">🎨</div>
+                    <h3>Overlay Vulkan 1.1 + ImGui</h3>
+                    <p>Dibuja cajas 2D/3D, esqueletos anatómicos completos, líneas de visión, distancias y radar sin utilizar ventanas Java de Android.</p>
+                </div>
+
+                <div class="feat-card">
+                    <div class="feat-icon">🤖</div>
+                    <h3>Servidor MCP para Asistentes IA</h3>
+                    <p>Permite a modelos como Gemini o Claude conectarse como copilotos para inspeccionar memoria, volcar offsets y diagnosticar variables.</p>
+                </div>
+
+                <div class="feat-card">
+                    <div class="feat-icon">🔬</div>
+                    <h3>ELF Fixer para IDA / Ghidra</h3>
+                    <p>Vuelca librerías protegidas desde la memoria RAM y reconstruye sus cabeceras corruptas para análisis estático en desensambladores.</p>
+                </div>
+
+                <div class="feat-card">
+                    <div class="feat-icon">⚡</div>
+                    <h3>Hot-Tuning en Caliente</h3>
+                    <p>Ajusta matrices de cámara, offsets de actores y filtros de loot al instante sin necesidad de recompilar el binario C++.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Tools Catalog -->
+    <section class="section" id="herramientas">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-tag">MODEL CONTEXT PROTOCOL</span>
+                <h2>Catálogo de Herramientas para IA</h2>
+                <p>Explora algunas de las herramientas expuestas para asistentes de lenguaje.</p>
+            </div>
+
+            <div class="tool-box">
+                <div class="tool-nav">
+                    <button class="tool-btn active" onclick="showTools('ue4', this)">🎮 Motor UE4 & Partida</button>
+                    <button class="tool-btn" onclick="showTools('memory', this)">✍️ Memoria & Parches</button>
+                    <button class="tool-btn" onclick="showTools('process', this)">⚙️ Estado & Procesos</button>
+                    <button class="tool-btn" onclick="showTools('files', this)">📁 Archivos & Storage</button>
+                </div>
+
+                <div class="tool-items" id="toolDisplay">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Guide -->
+    <section class="section section-alt" id="guia">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-tag">GUÍA DE INICIO</span>
+                <h2>Puesta en Marcha en 3 Pasos</h2>
+                <p>Configura tu teléfono y computadora en menos de 5 minutos.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-tag">Paso 1</span>
+                    <h3>📱 Celular (Android Root)</h3>
+                    <p>Copia el binario a tu teléfono y asígnale permisos 777:</p>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyCode('c1')">Copiar</button>
+                        <code id="c1"># 1. Copiar mem_server.sh a /data/local/tmp/
+# 2. MT Manager: Permisos 777 (rwxrwxrwx)
+# 3. Tocar y pulsar "Ejecutar" (Root)</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <span class="step-tag">Paso 2</span>
+                    <h3>💻 Computadora (PC Client)</h3>
+                    <p>Inicia el puente y el dashboard con un solo comando:</p>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyCode('c2')">Copiar</button>
+                        <code id="c2">cd pc_client
+npm install
+start_client.bat
+# Abre http://localhost:3000</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <span class="step-tag">Paso 3</span>
+                    <h3>🤖 Conectar IA (MCP)</h3>
+                    <p>Agrega la entrada en tu archivo <code>mcp_config.json</code>:</p>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyCode('c3')">Copiar</button>
+                        <code id="c3">"linx-memory": {
+  "command": "node",
+  "args": [".../mcp_server.js"]
+}</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Únete al Desarrollo Open Source</h2>
+            <p>El proyecto está disponible en GitHub bajo Licencia MIT para que la comunidad siga mejorando los offsets y el motor W2S.</p>
+            <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-main btn-cyan">
+                <span>🌟 Ver Repositorio en GitHub</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container foot-inner">
+            <div class="foot-brand">
+                ⚡ LINX_MCP_LECTOR
+            </div>
+            <div class="foot-links">
+                <a href="https://uam.lol/c" target="_blank">uam.lol/c</a>
+                <span style="color: rgba(255,255,255,0.2);">•</span>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank">GitHub</a>
+                <span style="color: rgba(255,255,255,0.2);">•</span>
+                <a href="https://uam.lol" target="_blank">uam.lol</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">¡Comando copiado al portapapeles!</div>
+
+    <script>
+        const TOOLS = {
+            ue4: [
+                { name: "mem_ue4_roots", desc: "Resuelve lib_base, FNamePool, GUObjectArray y GWorld en tiempo real." },
+                { name: "mem_get_world_actors", desc: "Extrae jugadores, bots, cajas de loot y coordenadas 3D (X, Y, Z)." },
+                { name: "mem_inspect_actor", desc: "Vuelca posición XYZ, rotación Pitch/Yaw/Roll, Mesh, Huesos y PlayerState." },
+                { name: "mem_set_ue4_config", desc: "Hot-Tuning: modifica offsets de cámara, actores y root sin reiniciar." },
+                { name: "mem_set_draw_config", desc: "Control del HUD Vulkan/ImGui (cajas 2D/3D, esqueleto, líneas, radar, loot)." },
+                { name: "mem_dump_fixed_elf", desc: "Vuelca y repara libUE4.so descifrada para análisis en IDA Pro y Ghidra." }
+            ],
+            memory: [
+                { name: "mem_read_hex / types", desc: "Lectura de memoria en formato hex o tipado (Int, Float, Vec3, ASCII)." },
+                { name: "mem_write_typed", desc: "Escritura tipada directa en RAM (modifica FOV, recoil o enteros en caliente)." },
+                { name: "mem_patch", desc: "Aplica parches de instrucciones ARM64 (NOPs, b, ret) con backup automático." },
+                { name: "mem_restore", desc: "Reversión instantánea de parches de memoria a su estado original." },
+                { name: "mem_read_pointer_chain", desc: "Sigue y resuelve cadenas de punteros multinivel en la memoria." },
+                { name: "mem_pattern_scan", desc: "Búsqueda AOB de firmas de bytes con comodines (??) en módulos .so." }
+            ],
+            process: [
+                { name: "mem_status", desc: "Consulta estado de la conexión, latencia ping, modo (USB/Wi-Fi) y PID." },
+                { name: "mem_attach", desc: "Vincula el daemon a un paquete específico (ej: com.proximabeta.mf.liteuamo)." },
+                { name: "mem_list_processes", desc: "Lista todos los procesos activos en Android y resalta juegos conocidos." },
+                { name: "mem_get_modules", desc: "Enumera módulos y librerías .so cargadas con dirección base y tamaño." }
+            ],
+            files: [
+                { name: "mem_fs_list", desc: "Explora directorios remotos en el celular (/data/local/tmp/) desde la PC o IA." },
+                { name: "mem_file_download", desc: "Descarga archivos desde el móvil a la PC a través de streaming TCP." },
+                { name: "mem_compress_archive", desc: "Comprime archivos o carpetas a formato ZIP o TAR en el teléfono." },
+                { name: "mem_push_auto_update", desc: "Hot-Reload del binario mem_server.sh en el celular sin reiniciar el juego." }
+            ]
+        };
+
+        function showTools(cat, btn) {
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            const container = document.getElementById('toolDisplay');
+            const list = TOOLS[cat] || [];
+            container.innerHTML = list.map(t => `
+                <div class="t-card">
+                    <div class="t-name">${t.name}</div>
+                    <div class="t-desc">${t.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+
+        // Init
+        showTools('ue4');
+    </script>
+</body>
+</html>
