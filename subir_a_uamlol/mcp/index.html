@@ -3,31 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LINX_MCP_LECTOR — Android Stealth Memory Bridge & AI Controller | uam.lol/mcp</title>
-    <meta name="description" content="Puente de memoria externo indetectable para Android ARM64 con Overlay Vulkan nativo y protocolo MCP para Inteligencias Artificiales.">
+    <title>LINX MCP LECTOR — Control de Memoria Android en Tiempo Real con IA</title>
+    <meta name="description" content="Lee la memoria de cualquier juego directamente, edita variables en tiempo real con Inteligencia Artificial y visualiza un HUD ESP nativo a 120 FPS sin inyección.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-dark: #070a12;
-            --bg-card: rgba(15, 23, 42, 0.7);
-            --bg-card-hover: rgba(26, 38, 66, 0.85);
-            --border: rgba(56, 189, 248, 0.2);
-            --border-glow: rgba(0, 240, 255, 0.5);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-base: #06090e;
+            --bg-surface: #0b111a;
+            --bg-card: rgba(13, 20, 31, 0.85);
+            --bg-card-hover: rgba(18, 28, 44, 0.95);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 240, 255, 0.35);
+            --border-accent: #00f0ff;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
             --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.15);
             --blue: #38bdf8;
             --purple: #a855f7;
-            --pink: #ec4899;
-            --green: #10b981;
-            --yellow: #f59e0b;
-            --font-head: 'Outfit', 'Inter', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'Fira Code', monospace;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
         }
 
         * {
@@ -41,192 +50,225 @@
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-body);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-main);
             line-height: 1.6;
             overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* Ambient Glow Backgrounds */
-        .bg-glow {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(140px);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.28;
-        }
-
-        .glow-1 {
-            top: -120px;
-            left: -100px;
-            width: 650px;
-            height: 650px;
-            background: radial-gradient(circle, var(--cyan), transparent 70%);
-        }
-
-        .glow-2 {
-            top: 45%;
-            right: -120px;
-            width: 750px;
-            height: 750px;
-            background: radial-gradient(circle, var(--purple), transparent 70%);
-        }
-
-        .glow-3 {
-            bottom: -100px;
-            left: 25%;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, var(--blue), transparent 70%);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 100% 30%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                linear-gradient(to bottom, transparent, var(--bg-base) 80%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            background-attachment: fixed;
         }
 
         /* Container */
         .container {
-            max-width: 1200px;
+            max-width: 1220px;
             margin: 0 auto;
             padding: 0 24px;
-            position: relative;
-            z-index: 10;
         }
 
-        /* Navbar */
-        .navbar {
+        /* Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon-lg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .icon-xl {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Header Navigation */
+        .header {
             position: sticky;
             top: 0;
-            width: 100%;
             z-index: 100;
-            background: rgba(7, 10, 18, 0.85);
+            background: rgba(6, 9, 14, 0.82);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .nav-inner {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: 16px 0;
         }
 
-        .brand-logo {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: var(--text-main);
-            font-family: var(--font-head);
-            font-size: 1.35rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
+            color: var(--text-primary);
         }
 
-        .brand-logo .accent {
-            color: var(--cyan);
-            text-shadow: 0 0 14px rgba(0, 240, 255, 0.5);
-        }
-
-        .nav-links {
+        .brand-icon-box {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2));
+            border: 1px solid var(--cyan);
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: center;
+            color: var(--cyan);
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
         }
 
-        .nav-links a {
-            color: var(--text-muted);
+        .brand-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: var(--cyan);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-menu a {
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 0.95rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s ease;
         }
 
-        .nav-links a:hover {
+        .nav-menu a:hover {
             color: var(--cyan);
         }
 
-        .btn-git {
+        .btn-nav-repo {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15));
-            border: 1px solid var(--cyan);
-            color: var(--cyan) !important;
             padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: 700 !important;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            border-radius: var(--radius-sm);
+            color: var(--cyan) !important;
             font-size: 0.9rem;
+            font-weight: 700 !important;
             box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
             transition: all 0.25s ease;
         }
 
-        .btn-git:hover {
+        .btn-nav-repo:hover {
             background: var(--cyan);
             color: #000 !important;
             box-shadow: 0 0 24px rgba(0, 240, 255, 0.6);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
-        /* Hero */
+        /* Hero Section */
         .hero {
             padding: 90px 0 60px;
             text-align: center;
+            position: relative;
         }
 
-        .badge-pill {
+        .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 6px 18px;
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid var(--border);
+            padding: 6px 16px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.25);
             border-radius: 30px;
             font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--blue);
-            margin-bottom: 24px;
+            font-weight: 700;
+            color: var(--cyan);
+            margin-bottom: 26px;
         }
 
-        .pulse-dot {
+        .badge-live-dot {
             width: 8px;
             height: 8px;
-            border-radius: 50%;
             background: var(--cyan);
+            border-radius: 50%;
             box-shadow: 0 0 10px var(--cyan);
-            animation: pulse 2s infinite;
+            animation: blink 2s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes blink {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.3); }
+            50% { opacity: 0.3; transform: scale(1.3); }
         }
 
         .hero h1 {
-            font-family: var(--font-head);
-            font-size: 3.5rem;
+            font-size: 3.4rem;
             font-weight: 900;
             line-height: 1.15;
+            letter-spacing: -1.5px;
             margin-bottom: 24px;
-            letter-spacing: -1px;
+            max-width: 980px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .grad-text {
-            background: linear-gradient(135deg, #00f0ff 0%, #38bdf8 45%, #a855f7 100%);
+        .gradient-title {
+            background: linear-gradient(135deg, #ffffff 10%, #00f0ff 60%, #38bdf8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 35px rgba(0, 240, 255, 0.3);
         }
 
-        .hero p {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            max-width: 800px;
+        .hero-banner-box {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(168, 85, 247, 0.06));
+            border: 1px solid rgba(0, 240, 255, 0.35);
+            border-radius: var(--radius-lg);
+            padding: 24px 32px;
+            max-width: 900px;
             margin: 0 auto 36px;
-            line-height: 1.7;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 240, 255, 0.05);
         }
 
-        .hero-btns {
+        .hero-banner-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hero-banner-desc {
+            font-size: 1.05rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .hero-banner-desc strong {
+            color: #fff;
+        }
+
+        .hero-actions {
             display: flex;
             justify-content: center;
             gap: 16px;
@@ -234,728 +276,765 @@
             margin-bottom: 50px;
         }
 
-        .btn-main {
+        /* Buttons */
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             padding: 14px 28px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 800;
             text-decoration: none;
             cursor: pointer;
             transition: all 0.25s ease;
-            font-family: var(--font-head);
         }
 
-        .btn-cyan {
+        .btn-primary {
             background: linear-gradient(135deg, #00f0ff, #0284c7);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 24px rgba(0, 240, 255, 0.45);
         }
 
-        .btn-cyan:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 32px rgba(0, 240, 255, 0.7);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 36px rgba(0, 240, 255, 0.75);
         }
 
-        .btn-dark {
-            background: rgba(30, 41, 59, 0.8);
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.7);
             color: #fff;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
         }
 
-        .btn-dark:hover {
-            background: rgba(51, 65, 85, 0.9);
+        .btn-secondary:hover {
+            background: rgba(51, 65, 85, 0.85);
             border-color: var(--cyan);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* Metric Cards */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .stat-box {
+        .metric-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 22px;
-            border-radius: 14px;
-            backdrop-filter: blur(14px);
-            text-align: center;
-            transition: border-color 0.2s;
-        }
-
-        .stat-box:hover {
-            border-color: var(--cyan);
-        }
-
-        .stat-val {
-            font-family: var(--font-head);
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--cyan);
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .stat-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* Section Commons */
-        .section {
-            padding: 90px 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: left;
             position: relative;
-            z-index: 10;
-        }
-
-        .section-alt {
-            background: rgba(15, 23, 42, 0.4);
-            border-top: 1px solid rgba(56, 189, 248, 0.1);
-            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-        }
-
-        .sec-head {
-            text-align: center;
-            max-width: 720px;
-            margin: 0 auto 50px;
-        }
-
-        .sec-tag {
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--cyan);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .sec-head h2 {
-            font-family: var(--font-head);
-            font-size: 2.3rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .sec-head p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* Architecture Visualizer */
-        .arch-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        .arch-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            backdrop-filter: blur(14px);
-            transition: all 0.3s ease;
-        }
-
-        .arch-card:hover {
-            border-color: var(--cyan);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
-            transform: translateY(-4px);
-        }
-
-        .arch-head {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .arch-emoji {
-            font-size: 2.2rem;
-        }
-
-        .arch-head h3 {
-            font-family: var(--font-head);
-            font-size: 1.25rem;
-            font-weight: 800;
-        }
-
-        .arch-badge {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--cyan);
-        }
-
-        .arch-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .arch-list li {
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .arch-list li::before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: var(--cyan);
-            font-weight: bold;
-        }
-
-        .arch-list code {
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--cyan);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        .feat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 28px;
+            overflow: hidden;
             transition: all 0.25s ease;
         }
 
-        .feat-card:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--cyan);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .feat-icon {
-            font-size: 2.2rem;
-            margin-bottom: 16px;
-        }
-
-        .feat-card h3 {
-            font-family: var(--font-head);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .feat-card p {
-            color: var(--text-muted);
-            font-size: 0.92rem;
-            line-height: 1.6;
-        }
-
-        /* Tool Catalog */
-        .tool-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            backdrop-filter: blur(14px);
-        }
-
-        .tool-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 16px;
-        }
-
-        .tool-btn {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .tool-btn:hover {
-            color: #fff;
-            border-color: var(--cyan);
-        }
-
-        .tool-btn.active {
-            background: var(--cyan);
-            color: #000;
-            border-color: var(--cyan);
-            font-weight: 700;
-            box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
-        }
-
-        .tool-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 16px;
-        }
-
-        .t-card {
-            background: rgba(10, 14, 23, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 18px;
-            border-radius: 10px;
-            transition: border-color 0.2s;
-        }
-
-        .t-card:hover {
-            border-color: var(--blue);
-        }
-
-        .t-name {
-            font-family: var(--font-mono);
-            color: var(--cyan);
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .t-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Steps */
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
-        .step-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 28px;
-            position: relative;
-        }
-
-        .step-tag {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: 900;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            font-family: var(--font-head);
-        }
-
-        .step-card h3 {
-            font-family: var(--font-head);
-            font-size: 1.25rem;
-            margin-bottom: 10px;
-        }
-
-        .step-card p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        .code-box {
-            background: #060910;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 14px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: #38bdf8;
-            line-height: 1.6;
-            position: relative;
-        }
-
-        .copy-btn {
+        .metric-card::before {
+            content: '';
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Section Layout */
+        .section {
+            padding: 90px 0;
+            position: relative;
+        }
+
+        .section-alt {
+            background: rgba(11, 17, 26, 0.6);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 760px;
+            margin: 0 auto 54px;
+        }
+
+        .section-tag {
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* Installation Pipeline Steps */
+        .pipeline-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .flow-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .flow-step-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .step-number-badge {
+            min-width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(56, 189, 248, 0.1));
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            font-size: 1.1rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 14px rgba(0, 240, 255, 0.25);
+        }
+
+        .step-title-box h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-title-box p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .terminal-box {
+            background: #03060a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            position: relative;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            line-height: 1.65;
+            color: #38bdf8;
+            margin-top: 14px;
+        }
+
+        .terminal-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tdot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .tdot-red { background: #ef4444; }
+        .tdot-yellow { background: #f59e0b; }
+        .tdot-green { background: #10b981; }
+
+        .terminal-title {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .copy-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            padding: 4px 8px;
+            color: #cbd5e1;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            font-family: var(--font-main);
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .copy-btn:hover {
+        .copy-trigger:hover {
             background: var(--cyan);
             color: #000;
+            border-color: var(--cyan);
         }
 
-        /* CTA */
-        .cta {
-            padding: 80px 0;
+        .terminal-box code {
+            color: #38bdf8;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .terminal-box .cmt {
+            color: #64748b;
+        }
+
+        .terminal-box .hl {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        /* Feature Matrix */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all 0.25s ease;
+        }
+
+        .feature-item:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 240, 255, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+        }
+
+        .feat-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(56, 189, 248, 0.05));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-item h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .feature-item p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* MCP Interactive Catalog */
+        .catalog-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+
+        .catalog-tabs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 24px;
+        }
+
+        .cat-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cat-tab:hover {
+            color: #fff;
+            border-color: var(--cyan);
+        }
+
+        .cat-tab.active {
+            background: var(--cyan);
+            color: #000;
+            border-color: var(--cyan);
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        .tool-card {
+            background: rgba(6, 9, 14, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .tool-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+
+        .tool-name {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Call To Action */
+        .cta-box {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.08));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 70px 32px;
             text-align: center;
-            background: linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.06));
-            border-top: 1px solid var(--border);
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
-        .cta h2 {
-            font-family: var(--font-head);
-            font-size: 2.6rem;
+        .cta-box h2 {
+            font-size: 2.8rem;
             font-weight: 900;
-            margin-bottom: 14px;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
         }
 
-        .cta p {
-            color: var(--text-muted);
+        .cta-box p {
+            color: #cbd5e1;
             font-size: 1.15rem;
             max-width: 680px;
-            margin: 0 auto 30px;
+            margin: 0 auto 34px;
         }
 
         /* Footer */
         .footer {
-            background: #05070c;
+            background: #030508;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 32px 0;
+            padding: 36px 0;
         }
 
-        .foot-inner {
+        .footer-inner {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 20px;
         }
 
-        .foot-brand {
-            font-family: var(--font-head);
-            font-weight: 900;
+        .footer-brand {
+            font-weight: 800;
             color: var(--cyan);
             font-size: 1.15rem;
-        }
-
-        .foot-links {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 8px;
         }
 
-        .foot-links a {
-            color: var(--text-muted);
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.2s;
         }
 
-        .foot-links a:hover {
+        .footer-links a:hover {
             color: var(--cyan);
         }
 
-        /* Toast notification */
-        .toast {
+        /* Toast */
+        .toast-msg {
             position: fixed;
             bottom: 24px;
             right: 24px;
             background: var(--cyan);
             color: #000;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-sm);
+            font-weight: 800;
             font-size: 0.9rem;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
-            transform: translateY(100px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 24px rgba(0, 240, 255, 0.6);
+            transform: translateY(120px);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1000;
         }
 
-        .toast.show {
+        .toast-msg.visible {
             transform: translateY(0);
             opacity: 1;
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.4rem; }
-            .nav-links a:not(.btn-git) { display: none; }
+            .hero h1 { font-size: 2.3rem; }
+            .nav-menu a:not(.btn-nav-repo) { display: none; }
+            .hero-banner-title { font-size: 1.05rem; }
+            .hero-banner-box { padding: 18px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
-    <div class="bg-glow glow-3"></div>
-
-    <!-- Header -->
-    <header class="navbar">
+    <!-- Header Navigation -->
+    <header class="header">
         <div class="container nav-inner">
-            <a href="https://uam.lol/mcp" class="brand-logo">
-                <span>⚡</span>
-                <span>LINX <span class="accent">MCP LECTOR</span></span>
+            <a href="https://uam.lol/mcp" class="brand">
+                <div class="brand-icon-box">
+                    <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="brand-text">LINX <span>MCP LECTOR</span></div>
             </a>
-            <div class="nav-links">
-                <a href="#arquitectura">Arquitectura</a>
+            <nav class="nav-menu">
+                <a href="#instalacion">Instalación</a>
                 <a href="#capacidades">Capacidades</a>
-                <a href="#herramientas">Tools MCP</a>
-                <a href="#guia">Inicio Rápido</a>
-                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-git">
-                    <span>🐙 GitHub Repo</span>
+                <a href="#tools">Tools MCP</a>
+                <a href="https://uam.lol/c" target="_blank">Comunidad uam.lol/c</a>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-nav-repo">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                    <span>GitHub v2.0</span>
                 </a>
-            </div>
+            </nav>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <div class="badge-pill">
-                <span class="pulse-dot"></span>
-                <span>OPEN SOURCE RELEASE & COMMUNITY EDITION</span>
-                <span style="background: rgba(0,240,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #fff;">v2.0 ARM64</span>
+            <div class="hero-badge">
+                <span class="badge-live-dot"></span>
+                <span>OPEN SOURCE RELEASE & COMMUNITY TOOL</span>
             </div>
 
             <h1>
-                Control de Memoria en Android <br>
-                <span class="grad-text">Potenciado por Inteligencia Artificial</span>
+                Inspección y Control de Memoria <br>
+                <span class="gradient-title">Con Asistencia de Inteligencia Artificial</span>
             </h1>
 
-            <p>
-                Puente externo indetectable (Zero-Injection) para Android ARM64 con renderizado acelerado por <strong>Vulkan 1.1 + ImGui</strong>, Web Dashboard en tiempo real y protocolo <strong>MCP</strong> para Antigravity IDE, Claude, Gemini y GPT.
-            </p>
+            <!-- PUNCHY VALUE PROPOSITION BANNER -->
+            <div class="hero-banner-box">
+                <div class="hero-banner-title">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Lectura Directa de Memoria & Telemetría IA</span>
+                </div>
+                <p class="hero-banner-desc">
+                    <strong>CON ESTA HERRAMIENTA PODRÁS LEER LA MEMORIA DE CUALQUIER JUEGO DIRECTAMENTE</strong>, la Inteligencia Artificial podrá inspeccionar structs, calibrar offsets y editar variables en tiempo real, mientras disfrutas de un <strong>HUD ESP acelerado por Vulkan a 120 FPS</strong> sin inyección de librerías.
+                </p>
+            </div>
 
-            <div class="hero-btns">
-                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-main btn-cyan">
-                    <span>🐙 Clonar en GitHub</span>
+            <div class="hero-actions">
+                <a href="#instalacion" class="btn btn-primary">
+                    <svg class="icon" viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                    <span>Guía de Instalación Rápida</span>
                 </a>
-                <a href="#guia" class="btn-main btn-dark">
-                    <span>🚀 Guía de Inicio</span>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn btn-secondary">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                    <span>Ver Repositorio GitHub</span>
                 </a>
             </div>
 
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <span class="stat-val">0%</span>
-                    <span class="stat-desc">Inyección en Juego (Pure /proc/mem)</span>
+            <!-- Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon-wrap">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="metric-value">Zero Injection</div>
+                    <div class="metric-label">Lectura pura por /proc/pid/mem y syscalls ARM64</div>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-val">120 FPS</span>
-                    <span class="stat-desc">Vulkan 1.1 Native Surface Overlay</span>
+
+                <div class="metric-card">
+                    <div class="metric-icon-wrap">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="metric-value">120 FPS Vulkan</div>
+                    <div class="metric-label">Overlay acelerado nativo sobre ANativeWindow</div>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-val">30+</span>
-                    <span class="stat-desc">Herramientas MCP para IA (JSON-RPC)</span>
+
+                <div class="metric-card">
+                    <div class="metric-icon-wrap">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                    </div>
+                    <div class="metric-value">30+ Tools MCP</div>
+                    <div class="metric-label">Integración JSON-RPC para Antigravity / Claude / GPT</div>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-val">1-Click</span>
-                    <span class="stat-desc">Ejecución Root con MT Manager (777)</span>
+
+                <div class="metric-card">
+                    <div class="metric-icon-wrap">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                    </div>
+                    <div class="metric-value">@memsvc Stealth</div>
+                    <div class="metric-label">Socket Unix Abstract sin puertos TCP expuestos</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Architecture Visualizer -->
-    <section class="section" id="arquitectura">
+    <!-- Detailed Step-by-Step Installation Pipeline -->
+    <section class="section section-alt" id="instalacion">
         <div class="container">
-            <div class="sec-head">
-                <span class="sec-tag">DISEÑO TÉCNICO</span>
-                <h2>Arquitectura de 3 Capas en Tiempo Real</h2>
-                <p>Integración limpia entre el kernel de Android, el puente en Node.js y los modelos de lenguaje.</p>
+            <div class="section-header">
+                <span class="section-tag">
+                    <svg class="icon" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    FLUJO PASO A PASO
+                </span>
+                <h2>Guía de Conexión e Instalación</h2>
+                <p>El orden exacto para vincular tu dispositivo Android, levantar el túnel de comunicación y habilitar el control por IA.</p>
             </div>
 
-            <div class="arch-grid">
-                <!-- Mobile -->
-                <div class="arch-card">
-                    <div class="arch-head">
-                        <span class="arch-emoji">📱</span>
-                        <div>
-                            <h3>1. Celular Android Root</h3>
-                            <span class="arch-badge">mem_server.sh (C++ ARM64)</span>
+            <div class="pipeline-flow">
+                <!-- STEP 0: ADB Connection -->
+                <div class="flow-step">
+                    <div class="flow-step-header">
+                        <div class="step-number-badge">01</div>
+                        <div class="step-title-box">
+                            <h3>
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                                Conectar el Celular a la PC vía ADB
+                            </h3>
+                            <p>Activa la <strong>Depuración USB</strong> en Opciones de desarrollador de tu celular Android y conéctalo mediante cable USB o Wi-Fi.</p>
                         </div>
                     </div>
-                    <ul class="arch-list">
-                        <li>Acceso por <code>/proc/&lt;pid&gt;/mem</code> y syscalls <code>SYS_vm_readv</code> (270).</li>
-                        <li>Socket Unix <code>@memsvc</code> invisible en escaneos TCP.</li>
-                        <li>Overlay Vulkan + ImGui nativo a 120 FPS.</li>
-                        <li>Reparador de ELF (<code>libUE4.so</code>) para IDA Pro / Ghidra.</li>
-                    </ul>
+                    <div class="terminal-box">
+                        <div class="terminal-top-bar">
+                            <div class="terminal-dots">
+                                <span class="tdot tdot-red"></span>
+                                <span class="tdot tdot-yellow"></span>
+                                <span class="tdot tdot-green"></span>
+                            </div>
+                            <span class="terminal-title">CMD / Terminal PC</span>
+                            <button class="copy-trigger" onclick="copyTerminal('cmd-step0')">
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copiar</span>
+                            </button>
+                        </div>
+                        <code id="cmd-step0"><span class="cmt"># 1. Comprobar que ADB detecta tu celular</span>
+adb devices
+
+<span class="cmt"># (Opcional si usas Wi-Fi) Conectar vía depuración inalámbrica:</span>
+adb connect 192.168.1.XX:5555</code>
+                    </div>
                 </div>
 
-                <!-- PC -->
-                <div class="arch-card">
-                    <div class="arch-head">
-                        <span class="arch-emoji">💻</span>
-                        <div>
-                            <h3>2. Cliente PC & Dashboard</h3>
-                            <span class="arch-badge">Express & WS en :3000</span>
+                <!-- STEP 1: Execute binary on phone -->
+                <div class="flow-step">
+                    <div class="flow-step-header">
+                        <div class="step-number-badge">02</div>
+                        <div class="step-title-box">
+                            <h3>
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                Copiar y Ejecutar el Servidor en Android (Root)
+                            </h3>
+                            <p>Transfiere el archivo binario compilado <code>mem_server.sh</code> a tu móvil, asígnale permisos completos y ejecútalo con Root.</p>
                         </div>
                     </div>
-                    <ul class="arch-list">
-                        <li>Túnel ADB Stealth (<code>tcp:8088 ➔ localabstract:memsvc</code>).</li>
-                        <li>Dashboard con 13 pestañas de inspección, radar y parches.</li>
-                        <li>Escáner de punteros y firmas AOB (Pattern Scanner).</li>
-                        <li>Gestor remoto de archivos con compresión ZIP/TAR.</li>
-                    </ul>
+                    <div class="terminal-box">
+                        <div class="terminal-top-bar">
+                            <div class="terminal-dots">
+                                <span class="tdot tdot-red"></span>
+                                <span class="tdot tdot-yellow"></span>
+                                <span class="tdot tdot-green"></span>
+                            </div>
+                            <span class="terminal-title">MT Manager / ADB Shell</span>
+                            <button class="copy-trigger" onclick="copyTerminal('cmd-step1')">
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copiar</span>
+                            </button>
+                        </div>
+                        <code id="cmd-step1"><span class="cmt"># Copiar binario a la memoria interna del teléfono:</span>
+adb push android_server/libs/arm64-v8a/mem_server.sh /data/local/tmp/
+
+<span class="cmt"># En MT Manager: Da permisos 777 (rwxrwxrwx) y dale a "Ejecutar" con Root</span>
+<span class="cmt"># O mediante consola ADB Root:</span>
+adb shell "su -c 'chmod 777 /data/local/tmp/mem_server.sh && /data/local/tmp/mem_server.sh'"</code>
+                    </div>
                 </div>
 
-                <!-- AI -->
-                <div class="arch-card">
-                    <div class="arch-head">
-                        <span class="arch-emoji">🤖</span>
-                        <div>
-                            <h3>3. Servidor MCP (IA)</h3>
-                            <span class="arch-badge">Antigravity / Claude / Gemini</span>
+                <!-- STEP 2: Launch PC Client -->
+                <div class="flow-step">
+                    <div class="flow-step-header">
+                        <div class="step-number-badge">03</div>
+                        <div class="step-title-box">
+                            <h3>
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                Iniciar el Cliente PC y el Túnel ADB Stealth
+                            </h3>
+                            <p>El cliente enciende el puente <code>device_bridge.js</code>, mapea el socket abstracto <code>@memsvc</code> y levanta el Dashboard Web en el puerto 3000.</p>
                         </div>
                     </div>
-                    <ul class="arch-list">
-                        <li>30+ herramientas estandarizadas JSON-RPC.</li>
-                        <li>Extracción de jugadores y coordenadas 3D de partida.</li>
-                        <li>Calibración en caliente de offsets sin reiniciar el juego.</li>
-                        <li>Control del HUD visual del teléfono en tiempo real.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Key Capabilities -->
-    <section class="section section-alt" id="capacidades">
-        <div class="container">
-            <div class="sec-head">
-                <span class="sec-tag">CAPACIDADES</span>
-                <h2>¿Qué hace único a LINX_MCP_LECTOR?</h2>
-                <p>Diseñado para ser indetectable, ultra rápido y extensible por la comunidad.</p>
-            </div>
-
-            <div class="features-grid">
-                <div class="feat-card">
-                    <div class="feat-icon">🛡️</div>
-                    <h3>Evasión Stealth (Zero-Injection)</h3>
-                    <p>No inyecta librerías <code>.so</code> ni modifica el APK. La lectura de memoria se ejecuta mediante syscalls directas de forma totalmente externa.</p>
-                </div>
-
-                <div class="feat-card">
-                    <div class="feat-icon">🔒</div>
-                    <h3>Unix Abstract Socket (@memsvc)</h3>
-                    <p>No abre puertos TCP visibles en <code>/proc/net/tcp</code>. El socket de dominio Unix abstracto es invisible para los escaneos de red del anti-cheat.</p>
-                </div>
-
-                <div class="feat-card">
-                    <div class="feat-icon">🎨</div>
-                    <h3>Overlay Vulkan 1.1 + ImGui</h3>
-                    <p>Dibuja cajas 2D/3D, esqueletos anatómicos completos, líneas de visión, distancias y radar sin utilizar ventanas Java de Android.</p>
-                </div>
-
-                <div class="feat-card">
-                    <div class="feat-icon">🤖</div>
-                    <h3>Servidor MCP para Asistentes IA</h3>
-                    <p>Permite a modelos como Gemini o Claude conectarse como copilotos para inspeccionar memoria, volcar offsets y diagnosticar variables.</p>
-                </div>
-
-                <div class="feat-card">
-                    <div class="feat-icon">🔬</div>
-                    <h3>ELF Fixer para IDA / Ghidra</h3>
-                    <p>Vuelca librerías protegidas desde la memoria RAM y reconstruye sus cabeceras corruptas para análisis estático en desensambladores.</p>
-                </div>
-
-                <div class="feat-card">
-                    <div class="feat-icon">⚡</div>
-                    <h3>Hot-Tuning en Caliente</h3>
-                    <p>Ajusta matrices de cámara, offsets de actores y filtros de loot al instante sin necesidad de recompilar el binario C++.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- MCP Tools Catalog -->
-    <section class="section" id="herramientas">
-        <div class="container">
-            <div class="sec-head">
-                <span class="sec-tag">MODEL CONTEXT PROTOCOL</span>
-                <h2>Catálogo de Herramientas para IA</h2>
-                <p>Explora algunas de las herramientas expuestas para asistentes de lenguaje.</p>
-            </div>
-
-            <div class="tool-box">
-                <div class="tool-nav">
-                    <button class="tool-btn active" onclick="showTools('ue4', this)">🎮 Motor UE4 & Partida</button>
-                    <button class="tool-btn" onclick="showTools('memory', this)">✍️ Memoria & Parches</button>
-                    <button class="tool-btn" onclick="showTools('process', this)">⚙️ Estado & Procesos</button>
-                    <button class="tool-btn" onclick="showTools('files', this)">📁 Archivos & Storage</button>
-                </div>
-
-                <div class="tool-items" id="toolDisplay">
-                    <!-- Populated dynamically via JS -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quick Start Guide -->
-    <section class="section section-alt" id="guia">
-        <div class="container">
-            <div class="sec-head">
-                <span class="sec-tag">GUÍA DE INICIO</span>
-                <h2>Puesta en Marcha en 3 Pasos</h2>
-                <p>Configura tu teléfono y computadora en menos de 5 minutos.</p>
-            </div>
-
-            <div class="steps-grid">
-                <div class="step-card">
-                    <span class="step-tag">Paso 1</span>
-                    <h3>📱 Celular (Android Root)</h3>
-                    <p>Copia el binario a tu teléfono y asígnale permisos 777:</p>
-                    <div class="code-box">
-                        <button class="copy-btn" onclick="copyCode('c1')">Copiar</button>
-                        <code id="c1"># 1. Copiar mem_server.sh a /data/local/tmp/
-# 2. MT Manager: Permisos 777 (rwxrwxrwx)
-# 3. Tocar y pulsar "Ejecutar" (Root)</code>
-                    </div>
-                </div>
-
-                <div class="step-card">
-                    <span class="step-tag">Paso 2</span>
-                    <h3>💻 Computadora (PC Client)</h3>
-                    <p>Inicia el puente y el dashboard con un solo comando:</p>
-                    <div class="code-box">
-                        <button class="copy-btn" onclick="copyCode('c2')">Copiar</button>
-                        <code id="c2">cd pc_client
+                    <div class="terminal-box">
+                        <div class="terminal-top-bar">
+                            <div class="terminal-dots">
+                                <span class="tdot tdot-red"></span>
+                                <span class="tdot tdot-yellow"></span>
+                                <span class="tdot tdot-green"></span>
+                            </div>
+                            <span class="terminal-title">PC Launcher</span>
+                            <button class="copy-trigger" onclick="copyTerminal('cmd-step2')">
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copiar</span>
+                            </button>
+                        </div>
+                        <code id="cmd-step2">cd pc_client
 npm install
 start_client.bat
-# Abre http://localhost:3000</code>
+
+<span class="cmt"># Abre automáticamente http://localhost:3000 con 13 pestañas interactivas</span></code>
                     </div>
                 </div>
 
-                <div class="step-card">
-                    <span class="step-tag">Paso 3</span>
-                    <h3>🤖 Conectar IA (MCP)</h3>
-                    <p>Agrega la entrada en tu archivo <code>mcp_config.json</code>:</p>
-                    <div class="code-box">
-                        <button class="copy-btn" onclick="copyCode('c3')">Copiar</button>
-                        <code id="c3">"linx-memory": {
-  "command": "node",
-  "args": [".../mcp_server.js"]
+                <!-- STEP 3: Connect AI (MCP) -->
+                <div class="flow-step">
+                    <div class="flow-step-header">
+                        <div class="step-number-badge">04</div>
+                        <div class="step-title-box">
+                            <h3>
+                                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                Vincular tu Inteligencia Artificial (MCP Server)
+                            </h3>
+                            <p>Añade la configuración en tu archivo <code>mcp_config.json</code> para que <strong>Antigravity IDE, Claude Desktop o Gemini</strong> tomen el control.</p>
+                        </div>
+                    </div>
+                    <div class="terminal-box">
+                        <div class="terminal-top-bar">
+                            <div class="terminal-dots">
+                                <span class="tdot tdot-red"></span>
+                                <span class="tdot tdot-yellow"></span>
+                                <span class="tdot tdot-green"></span>
+                            </div>
+                            <span class="terminal-title">mcp_config.json</span>
+                            <button class="copy-trigger" onclick="copyTerminal('cmd-step3')">
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copiar</span>
+                            </button>
+                        </div>
+                        <code id="cmd-step3">{
+  "mcpServers": {
+    "linx-memory": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Usuario\\Documents\\C\\AB\\LINX_MCP_LECTOR\\pc_client\\server\\mcp_server.js"
+      ]
+    }
+  }
 }</code>
                     </div>
                 </div>
@@ -963,27 +1042,140 @@ start_client.bat
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
+    <!-- Key Capabilities Matrix -->
+    <section class="section" id="capacidades">
         <div class="container">
-            <h2>Únete al Desarrollo Open Source</h2>
-            <p>El proyecto está disponible en GitHub bajo Licencia MIT para que la comunidad siga mejorando los offsets y el motor W2S.</p>
-            <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-main btn-cyan">
-                <span>🌟 Ver Repositorio en GitHub</span>
-            </a>
+            <div class="section-header">
+                <span class="section-tag">
+                    <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    ARQUITECTURA DE VANGUARDIA
+                </span>
+                <h2>Capacidades del Ecosistema LINX</h2>
+                <p>Creado específicamente para sortear protecciones modernas y habilitar automatización inteligente.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>Evasión Stealth Total</h3>
+                    <p>No inyecta archivos <code>.so</code> ni manipula el código del ejecutable. La memoria es leída por llamadas del kernel directas desde un proceso externo independiente.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                    <h3>Socket Unix Abstract (@memsvc)</h3>
+                    <p>En lugar de abrir puertos TCP identificables en <code>/proc/net/tcp</code>, canaliza la comunicación por socket abstracto invisible para el anti-cheat del juego.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <h3>HUD Nativo Vulkan + ImGui</h3>
+                    <p>Renderiza cajas 2D/3D, esqueleto anatómico completo, radar y filtros de loot a 120 FPS sin ventanas flotantes Java ni sobrecargar la GPU.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                    </div>
+                    <h3>Copiloto de IA vía MCP</h3>
+                    <p>Tu IA puede leer la partida en tiempo real, listar jugadores, calibrar offsets dinámicos de cámara y aplicar parches seguros con respaldo automático.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <h3>ELF Fixer para IDA Pro & Ghidra</h3>
+                    <p>Vuelca la librería <code>libUE4.so</code> desencriptada directamente desde la memoria RAM y reconstruye sus tablas de secciones corruptas.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feat-icon-box">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    </div>
+                    <h3>Hot-Tuning en Tiempo Real</h3>
+                    <p>Modifica cualquier offset de cámara, actor o componente al vuelo sin reiniciar la partida ni recompilar el binario C++.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Tools Interactive Explorer -->
+    <section class="section section-alt" id="tools">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">
+                    <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="18" x2="8" y2="22"/><line x1="16" y1="18" x2="16" y2="22"/><line x1="2" y1="8" x2="6" y2="8"/><line x1="2" y1="16" x2="6" y2="16"/><line x1="18" y1="8" x2="22" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg>
+                    MODEL CONTEXT PROTOCOL
+                </span>
+                <h2>Catálogo de Herramientas para IA</h2>
+                <p>Las funciones que la Inteligencia Artificial ejecuta para diagnosticar e interactuar con el juego.</p>
+            </div>
+
+            <div class="catalog-container">
+                <div class="catalog-tabs">
+                    <button class="cat-tab active" onclick="filterTools('ue4', this)">
+                        <svg class="icon" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                        <span>Motor UE4 & Partida</span>
+                    </button>
+                    <button class="cat-tab" onclick="filterTools('memory', this)">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Memoria & Parches</span>
+                    </button>
+                    <button class="cat-tab" onclick="filterTools('process', this)">
+                        <svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span>Estado & Procesos</span>
+                    </button>
+                    <button class="cat-tab" onclick="filterTools('files', this)">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        <span>Archivos & Storage</span>
+                    </button>
+                </div>
+
+                <div class="tools-grid" id="toolsGrid">
+                    <!-- Dynamic Tool Items -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>¿Listo para Explorar el Proyecto?</h2>
+                <p>Clona el repositorio libre en GitHub, pruébalo en tu dispositivo Android con Root y comparte tus mejoras con la comunidad.</p>
+                <div class="hero-actions" style="margin-bottom: 0;">
+                    <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn btn-primary">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                        <span>Ver Código en GitHub</span>
+                    </a>
+                    <a href="https://uam.lol/c" target="_blank" class="btn btn-secondary">
+                        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span>Comunidad uam.lol/c</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container foot-inner">
-            <div class="foot-brand">
-                ⚡ LINX_MCP_LECTOR
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>LINX_MCP_LECTOR • Open Source Project</span>
             </div>
-            <div class="foot-links">
+            <div class="footer-links">
                 <a href="https://uam.lol/c" target="_blank">uam.lol/c</a>
                 <span style="color: rgba(255,255,255,0.2);">•</span>
-                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank">GitHub</a>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank">GitHub Repository</a>
                 <span style="color: rgba(255,255,255,0.2);">•</span>
                 <a href="https://uam.lol" target="_blank">uam.lol</a>
             </div>
@@ -991,10 +1183,14 @@ start_client.bat
     </footer>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast">¡Comando copiado al portapapeles!</div>
+    <div id="toast" class="toast-msg">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>¡Comando copiado al portapapeles!</span>
+    </div>
 
+    <!-- Script -->
     <script>
-        const TOOLS = {
+        const TOOLS_CATALOG = {
             ue4: [
                 { name: "mem_ue4_roots", desc: "Resuelve lib_base, FNamePool, GUObjectArray y GWorld en tiempo real." },
                 { name: "mem_get_world_actors", desc: "Extrae jugadores, bots, cajas de loot y coordenadas 3D (X, Y, Z)." },
@@ -1025,32 +1221,36 @@ start_client.bat
             ]
         };
 
-        function showTools(cat, btn) {
-            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+        function filterTools(category, tabBtn) {
+            document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+            if (tabBtn) tabBtn.classList.add('active');
 
-            const container = document.getElementById('toolDisplay');
-            const list = TOOLS[cat] || [];
-            container.innerHTML = list.map(t => `
-                <div class="t-card">
-                    <div class="t-name">${t.name}</div>
-                    <div class="t-desc">${t.desc}</div>
+            const container = document.getElementById('toolsGrid');
+            const items = TOOLS_CATALOG[category] || [];
+            container.innerHTML = items.map(tool => `
+                <div class="tool-card">
+                    <div class="tool-name">
+                        <svg class="icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        <span>${tool.name}</span>
+                    </div>
+                    <div class="tool-desc">${tool.desc}</div>
                 </div>
             `).join('');
         }
 
-        function copyCode(id) {
+        function copyTerminal(id) {
             const el = document.getElementById(id);
             if (!el) return;
-            navigator.clipboard.writeText(el.innerText).then(() => {
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2500);
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 2400);
             });
         }
 
         // Init
-        showTools('ue4');
+        filterTools('ue4');
     </script>
 </body>
 </html>
