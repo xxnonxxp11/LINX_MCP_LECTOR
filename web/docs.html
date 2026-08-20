@@ -393,7 +393,8 @@
                 <li><a href="#mcp">4. Catálogo de Tools MCP (IA)</a></li>
                 <li><a href="#elffixer">5. ELF Fixer (IDA & Ghidra)</a></li>
                 <li><a href="#hottuning">6. Calibración de Offsets</a></li>
-                <li><a href="#quickstart">7. Puesta en Marcha Rápida</a></li>
+                <li><a href="#autoupdate">7. Motor Auto-Update</a></li>
+                <li><a href="#quickstart">8. Puesta en Marcha Rápida</a></li>
             </ul>
         </aside>
 
@@ -564,9 +565,36 @@
                 </div>
             </section>
 
-            <!-- SECTION 7: QUICKSTART -->
-            <section class="doc-section" id="quickstart">
+            <!-- SECTION 7: AUTO-UPDATER -->
+            <section class="doc-section" id="autoupdate">
                 <span class="doc-tag">CAPÍTULO 07</span>
+                <h2>Motor de Auto-Actualización en Caliente (Hot-Reloading)</h2>
+                <p>
+                    El módulo <code>auto_updater.cpp</code> permite compilar nuevas versiones del daemon en tu PC e instalarlas en el celular <strong>en plena partida sin cerrar el juego ni perder la sesión</strong>:
+                </p>
+                <h3>1. Pipeline de Validación en Sandbox</h3>
+                <p>
+                    Antes de sustituir el proceso vivo, el daemon ejecuta un <code>fork()</code> y comprueba el nuevo binario candidato con el flag <code>-h</code> para verificar integridad ELF y librerías dinámicas ARM64. Si falla, aborta sin afectar el juego.
+                </p>
+                <h3>2. Reemplazo Atómico e Intercambio de Sockets</h3>
+                <p>
+                    Una vez validado, reemplaza <code>/data/local/tmp/mem_server.sh</code>, ejecuta el nuevo ejecutable con permisos Root y transfiere el socket abstracto <code>@memsvc</code> en menos de <strong>400 milisegundos</strong>.
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Disparo de Auto-Update desde PC o IA</span>
+                        <button class="copy-btn" onclick="copySnippet('autoupdate-cmd')">Copiar</button>
+                    </div>
+                    <code id="autoupdate-cmd"># Mediante script bat:
+adb push android_server/libs/arm64-v8a/mem_server.sh /data/local/tmp/mem_update.sh
+# O mediante comando JSON-RPC / MCP:
+{"cmd":"auto_update_binary","source":"/data/local/tmp/mem_update.sh"}</code>
+                </div>
+            </section>
+
+            <!-- SECTION 8: QUICKSTART -->
+            <section class="doc-section" id="quickstart">
+                <span class="doc-tag">CAPÍTULO 08</span>
                 <h2>Puesta en Marcha Rápida</h2>
                 <p>Resumen de ejecución en 3 pasos:</p>
                 <ul>
