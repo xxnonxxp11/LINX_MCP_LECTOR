@@ -1,0 +1,15 @@
+{
+  "name": "android-root-memory-client",
+  "version": "1.0.0",
+  "description": "Stealth Android Root Memory Inspector & MCP Server for Game Analysis",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "mcp": "node server/mcp_server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.16.0",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# C++ Build outputs & temporary objects
+obj/
+libs/
+*.o
+*.obj
+*.d
+
+# Logs and runtime caches
+*.log
+*.tmp
+last_adb_addr.txt
+last_host.json
+
+# IDE and OS files
+.vscode/
+.idea/
+.gemini/
+.DS_Store
+Thumbs.db
+
+# Archives and memory dumps
+*.zip
+*.tar
+*.gz
+*.7z
+*.bin
+dumped_fixed.so
+dumped_*.so

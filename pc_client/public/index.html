@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINX_MCP_LECTOR - Memory Bridge & MCP Controller</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <header class="navbar" id="topNavbar">
+            <div class="logo-group">
+                <div class="glow-orb" id="navbarGlowOrb"></div>
+                <div class="brand">
+                    <span class="brand-title">LINX <span class="accent-text">MCP LECTOR</span></span>
+                    <span class="brand-sub">STEALTH MEMORY DAEMON & MCP | <a href="https://uam.lol/c" target="_blank" style="color: #38bdf8; text-decoration: none;">uam.lol/c</a></span>
+                </div>
+            </div>
+
+            <div class="nav-status-group">
+                <!-- Phone Connection Badge -->
+                <div class="status-badge status-disconnected" id="phoneStatusBadge">
+                    <span class="status-icon-wrap" id="phoneStatusIcon">
+                        <svg class="icon-waiting" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                    </span>
+                    <span class="status-label" id="phoneStatusText">CELULAR: DESCONECTADO (ESPERANDO)</span>
+                </div>
+
+                <!-- PC Server Badge -->
+                <div class="status-badge status-pc" id="pcStatusBadge" title="Servidor PC Express & WebSocket Activo">
+                    <svg class="badge-check-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="status-label" id="pcStatusText">PC CLIENTE</span>
+                </div>
+
+                <!-- Target Process Badge (Red warning if none, Green when attached, PID only shown when attached) -->
+                <div class="target-badge empty" id="targetBadge">
+                    <span class="target-icon" id="targetIcon">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="icon-target-svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <span class="target-label" id="targetLabelWrap"><span id="targetText">⚠️ Sin Proceso Vinculado</span></span>
+                    <span class="pid-tag" id="pidText" style="display: none;">PID: --</span>
+                </div>
+
+                <!-- MCP Checkmark Badge -->
+                <div class="mcp-badge" id="mcpBadge" title="Antigravity AI MCP Conectado & Operativo">
+                    <svg class="mcp-check-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="mcp-label">MCP</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Activity Telemetry Bar -->
+        <div class="activity-bar" id="activityBar">
+            <div class="telemetry-left">
+                <span class="telemetry-item"><svg class="tele-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 2v10h8V5H4zm4 11a1 1 0 100-2 1 1 0 000 2z"/></svg> <strong>Estado Celular:</strong> <span id="telemetryPhoneState" class="text-yellow">ESPERANDO CLIENTE EN PUERTO 8088</span></span>
+                <span class="telemetry-item"><svg class="tele-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm2 0h10v8H5V5z" clip-rule="evenodd"/></svg> <strong>Estado PC:</strong> <span class="text-green">ACTIVO & ESCUCHANDO</span></span>
+                <span class="telemetry-item"><svg class="tele-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg> <strong>Latencia (Ping):</strong> <span id="telemetryPing" class="text-cyan">-- ms</span></span>
+            </div>
+            <div class="telemetry-right">
+                <span class="telemetry-method"><svg class="tele-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg> Daemon: /proc/pid/mem Stealth</span>
+                <span id="telemetryTime" class="telemetry-clock">--:--:--</span>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar Navigation -->
+            <nav class="sidebar">
+                <button class="nav-tab active" data-tab="dashboard">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                    <span>Dashboard & Conexión</span>
+                </button>
+                <button class="nav-tab" data-tab="processes">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                    <span>Procesos Android</span>
+                </button>
+                <button class="nav-tab" data-tab="modules">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span>Módulos (.so)</span>
+                </button>
+                <button class="nav-tab" data-tab="actors">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    <span>UE4 World (GWorld)</span>
+                </button>
+                <button class="nav-tab" data-tab="lobby">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Lobby & Personaje</span>
+                </button>
+                <button class="nav-tab" data-tab="files">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    <span>Archivos & Storage</span>
+                </button>
+                <button class="nav-tab" data-tab="hexview">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    <span>Hex & Memory Inspector</span>
+                </button>
+                <button class="nav-tab" data-tab="ptrchain">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    <span>Pointer Chains</span>
+                </button>
+                <button class="nav-tab" data-tab="scanner">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Pattern Scanner</span>
+                </button>
+                <button class="nav-tab" data-tab="mcp">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Herramientas MCP (IA)</span>
+                </button>
+                <button class="nav-tab" data-tab="logs">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                    <span>Consola & Logs</span>
+                </button>
+                <button class="nav-tab" data-tab="updates">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Updates & Sistema</span>
+                </button>
+                <button class="nav-tab" data-tab="vmdecrypt">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>🔐 VM Decrypt</span>
+                </button>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="content-container">
+                <!-- TAB 1: DASHBOARD & CONNECTION -->
+                <section class="tab-content active" id="tab-dashboard">
+                    <div class="grid-2col">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>⚡ Android Stealth Daemon (ADB Bridge)</h3>
+                                <span class="badge badge-cyan" id="connModeBadge">@memsvc Stealth</span>
+                            </div>
+                            <div class="card-body">
+                                <!-- ADB Device Detection Indicator Banner -->
+                                <div id="usbDetectBox" class="alert-box mb-3" style="padding: 12px 14px; border-radius: 6px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span id="usbIndicatorDot" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #94a3b8;"></span>
+                                        <div>
+                                            <div id="usbDetectText" style="font-size: 13px; font-weight: 600;">Escaneando dispositivos ADB...</div>
+                                            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Túnel Stealth: <code style="color: #38bdf8;">127.0.0.1:8088 ➔ @memsvc</code> (Indetectable / Sin puerto TCP)</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-secondary" id="btnUsbRecheck" style="font-size: 11px; padding: 4px 10px;">🔄 Recheck ADB</button>
+                                </div>
+
+                                <div class="btn-group" style="margin-top: 8px;">
+                                    <button class="btn btn-primary" id="btnConnect" style="flex: 2; font-weight: 600; font-size: 14px;">⚡ Conectar Celular</button>
+                                    <button class="btn btn-danger" id="btnDisconnect" disabled style="flex: 1;">Desconectar</button>
+                                    <button class="btn btn-secondary" id="btnAdbForward" style="flex: 1;">Re-Túnel ADB</button>
+                                </div>
+                                <div class="connection-tip" style="margin-top: 14px;">
+                                    <p><strong>🛡️ Modo 100% Stealth:</strong> Conexión automática por túnel Unix Abstract Socket. No requiere configuración de IPs ni puertos.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🎯 Vinculación Rápida de Juego</h3>
+                                <span class="badge badge-purple">Arena Breakout</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-attach-list">
+                                    <button class="btn btn-card-item" id="btnAttachABLite">
+                                        <div class="item-info">
+                                            <strong>Arena Breakout Lite</strong>
+                                            <small>com.proximabeta.mf.liteuamo</small>
+                                        </div>
+                                        <span class="btn-tag">Vincular</span>
+                                    </button>
+                                    <button class="btn btn-card-item" id="btnAttachABMain">
+                                        <div class="item-info">
+                                            <strong>Arena Breakout Standard</strong>
+                                            <small>com.proximabeta.mf.uamo</small>
+                                        </div>
+                                        <span class="btn-tag">Vincular</span>
+                                    </button>
+                                </div>
+                                <div class="custom-attach-box">
+                                    <label>Paquete o PID Personalizado</label>
+                                    <div class="input-with-btn">
+                                        <input type="text" id="customTargetInput" placeholder="Ej. com.proximabeta.mf.liteuamo o 2236">
+                                        <button class="btn btn-accent" id="btnCustomAttach">Vincular</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Overview Panel -->
+                    <div class="card glass-card mt-4">
+                        <div class="card-header">
+                            <h3>📊 Live Memory Bridge Status</h3>
+                            <button class="btn btn-sm btn-secondary" id="btnRefreshStatus">🔄 Actualizar</button>
+                        </div>
+                        <div class="card-body status-metrics-grid">
+                            <div class="metric-box">
+                                <span class="metric-title">Conexión Daemon</span>
+                                <span class="metric-value text-cyan" id="metricConnection">Desconectado</span>
+                            </div>
+                            <div class="metric-box" id="metricTargetBox">
+                                <span class="metric-title">Target Process</span>
+                                <span class="metric-value metric-alert" id="metricTarget">⚠️ Sin Proceso Vinculado</span>
+                            </div>
+                            <div class="metric-box" id="metricPidBox">
+                                <span class="metric-title">Process ID (PID)</span>
+                                <span class="metric-value text-muted" id="metricPid">--</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-title">Método Kernel</span>
+                                <span class="metric-value text-yellow">/proc/pid/mem + syscall</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: PROCESSES -->
+                <section class="tab-content" id="tab-processes">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🔍 Running Android Processes</h3>
+                            <div class="header-actions">
+                                <input type="text" id="processFilter" class="search-input" placeholder="Filter processes...">
+                                <button class="btn btn-sm btn-primary" id="btnRefreshProcesses">Scan Processes</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table" id="processTable">
+                                <thead>
+                                    <tr>
+                                        <th>PID</th>
+                                        <th>Process Name</th>
+                                        <th>Command Line</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="processTableBody">
+                                    <tr><td colspan="4" class="empty-state">Click "Scan Processes" to list all Android tasks</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: MODULES -->
+                <section class="tab-content" id="tab-modules">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>📚 Loaded Shared Libraries (.so Modules)</h3>
+                            <div class="header-actions">
+                                <input type="text" id="moduleFilter" class="search-input" placeholder="Filter libUE4, libanogs...">
+                                <button class="btn btn-sm btn-primary" id="btnRefreshModules">Scan Modules</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table" id="moduleTable">
+                                <thead>
+                                    <tr>
+                                        <th>Module Name</th>
+                                        <th>Base Address</th>
+                                        <th>End Address</th>
+                                        <th>Size</th>
+                                        <th>Perms</th>
+                                        <th>Path</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="moduleTableBody">
+                                    <tr><td colspan="7" class="empty-state">Attach to a process and click "Scan Modules"</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3.5: WORLD ENTITIES & ACTORS (GWorld) -->
+                <section class="tab-content" id="tab-actors">
+                    <!-- UE4 Roots Status Banner -->
+                    <div class="card glass-card mb-4" style="margin-bottom: 20px;">
+                        <div class="card-header">
+                            <h3>🧬 UE4 Reflection Roots & IDA Pro Dumper</h3>
+                            <div class="header-actions">
+                                <button class="btn btn-sm btn-secondary" id="btnDetectRoots">Refresh Roots</button>
+                                <button class="btn btn-sm btn-danger" id="btnDumpSO" style="background: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-red); color: #fca5a5;">⚡ Dump & Fix libUE4.so for IDA</button>
+                            </div>
+                        </div>
+                        <div class="card-body status-metrics-grid">
+                            <div class="metric-box">
+                                <span class="metric-title">libUE4 Base</span>
+                                <span class="metric-value text-cyan" id="ue4LibBase">--</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-title">FNamePool</span>
+                                <span class="metric-value text-green" id="ue4FNamePool">--</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-title">GUObjectArray</span>
+                                <span class="metric-value text-purple" id="ue4GUObjects">--</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-title">GWorld Ptr</span>
+                                <span class="metric-value text-yellow" id="ue4GWorld">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2D Tactical Radar & Live Player Scanner -->
+                    <div class="grid-2col" style="grid-template-columns: 360px 1fr; gap: 20px; margin-bottom: 20px;">
+                        <!-- Radar Canvas Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🛰️ Radar Táctico 2D (Top-Down)</h3>
+                                <div class="header-actions">
+                                    <select id="radarRange" class="input-select" style="padding: 4px 8px; font-size: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px;">
+                                        <option value="50">50m</option>
+                                        <option value="100" selected>100m</option>
+                                        <option value="200">200m</option>
+                                        <option value="500">500m</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px;">
+                                <canvas id="radarCanvas" width="320" height="320" style="background: rgba(8, 12, 22, 0.95); border: 1px solid var(--border-glow); border-radius: 50%; box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);"></canvas>
+                                <div style="display: flex; gap: 12px; margin-top: 12px; font-size: 11px; flex-wrap: wrap; justify-content: center;">
+                                    <span style="color: var(--accent-cyan); display: flex; align-items: center; gap: 4px;">▲ Tú</span>
+                                    <span style="color: var(--accent-red); display: flex; align-items: center; gap: 4px;">● Enemigo</span>
+                                    <span style="color: var(--accent-green); display: flex; align-items: center; gap: 4px;">● Aliado</span>
+                                    <span style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">● Bot / IA</span>
+                                    <span style="color: #93c5fd; display: flex; align-items: center; gap: 4px;">■ Loot</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Entities Table Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🎯 Jugadores & Entidades en Vivo</h3>
+                                <div class="header-actions">
+                                    <div class="filter-pills" style="display: flex; gap: 6px;">
+                                        <button class="btn btn-sm btn-secondary filter-btn active" data-filter="all">Todos</button>
+                                        <button class="btn btn-sm btn-secondary filter-btn" data-filter="enemy" style="color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">Enemigos</button>
+                                        <button class="btn btn-sm btn-secondary filter-btn" data-filter="teammate" style="color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3);">Aliados</button>
+                                        <button class="btn btn-sm btn-secondary filter-btn" data-filter="bot" style="color: var(--accent-yellow); border-color: rgba(245, 158, 11, 0.3);">Bots</button>
+                                        <button class="btn btn-sm btn-secondary filter-btn" data-filter="item" style="color: #93c5fd; border-color: rgba(147, 197, 253, 0.3);">Loot</button>
+                                    </div>
+                                    <label class="checkbox-container" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-left: 10px;">
+                                        <input type="checkbox" id="chkAutoRefreshActors">
+                                        Live Tracker (1s)
+                                    </label>
+                                    <button class="btn btn-sm btn-primary" id="btnRefreshActors">Escanear</button>
+                                </div>
+                            </div>
+                            <div class="card-body table-responsive" style="max-height: 420px; overflow-y: auto;">
+                                <table class="data-table" id="actorTable">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tipo</th>
+                                            <th>Distancia</th>
+                                            <th>Nombre / Clase</th>
+                                            <th>Equipo</th>
+                                            <th>Posición 3D (X, Y, Z)</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="actorTableBody">
+                                        <tr><td colspan="7" class="empty-state">Inicia el juego en el teléfono y haz clic en "Escanear" para localizar jugadores</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3.6: LOBBY & MAIN CHARACTER (AVATAR) -->
+                <section class="tab-content" id="tab-lobby">
+                    <div class="grid-2col">
+                        <!-- Main Character & Lobby Status Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>👤 Personaje Principal (Lobby Avatar)</h3>
+                                <span class="badge badge-cyan" id="lobbyStatusBadge">Lobby Activo</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="status-metrics-grid mb-3" style="grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;">
+                                    <div class="metric-box" style="background: rgba(0, 240, 255, 0.08); border-color: rgba(0, 240, 255, 0.3);">
+                                        <span class="metric-title">👤 Nombre Operador</span>
+                                        <span class="metric-value text-cyan" id="lobbyPlayerName" style="font-size: 16px; font-weight: bold;">Johncake</span>
+                                    </div>
+                                    <div class="metric-box" style="background: rgba(255, 215, 0, 0.08); border-color: rgba(255, 215, 0, 0.3);">
+                                        <span class="metric-title">⭐ Nivel de Cuenta</span>
+                                        <span class="metric-value text-yellow" id="lobbyPlayerLevel" style="font-size: 16px; font-weight: bold;">Nivel 21</span>
+                                    </div>
+                                    <div class="metric-box" style="background: rgba(46, 213, 115, 0.08); border-color: rgba(46, 213, 115, 0.3);">
+                                        <span class="metric-title">💰 Depósito Almacén</span>
+                                        <span class="metric-value text-green" id="lobbyStashValue" style="font-size: 16px; font-weight: bold;">--</span>
+                                    </div>
+                                    <div class="metric-box" style="background: rgba(46, 213, 115, 0.08); border-color: rgba(46, 213, 115, 0.3);">
+                                        <span class="metric-title">💵 Dinero Efectivo</span>
+                                        <span class="metric-value text-green" id="lobbyCashValue" style="font-size: 16px; font-weight: bold;">2,425K Koen</span>
+                                    </div>
+                                    <div class="metric-box" style="background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.3);">
+                                        <span class="metric-title">🎖️ Rango Competitivo</span>
+                                        <span class="metric-value text-purple" id="lobbyPlayerRank" style="font-size: 14px; font-weight: 600;">Vanguardia 1 (14/24)</span>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-title">🏆 Título Activo</span>
+                                        <span class="metric-value text-cyan" id="lobbyPlayerTitle" style="font-size: 14px; font-weight: 600;">Ejemplo Moral</span>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-title">⏱️ Tiempo / Asaltos</span>
+                                        <span class="metric-value text-yellow" id="lobbyPlayStats" style="font-size: 14px; font-weight: 600;">5h | 34 Asaltos</span>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-title">Estado Menú</span>
+                                        <span class="metric-value text-green" id="lobbyMenuState">En Lobby / Menú</span>
+                                    </div>
+                                </div>
+
+                                <div class="btn-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-primary" id="btnScanLobby">🔍 Escanear Datos del Lobby</button>
+                                    <button class="btn btn-secondary" id="btnInspectLobbyWorld">🔬 Inspeccionar Memoria UWorld</button>
+                                </div>
+
+                                <div class="connection-tip" style="margin-top: 15px;">
+                                    <p><strong>💡 Nota Técnica:</strong> En el menú principal, tu personaje es renderizado como un <em>Avatar Mesh</em> de inventario. En cuanto entres a una partida o al <strong>Campo de Tiro / Entrenamiento</strong>, se convertirá en un actor físico <code>PlayerCharacter</code> con coordenadas 3D en la pestaña <strong>UE4 World</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lobby Subsystem & Inventory Info Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🎒 Subsistema de Inventario & UMG</h3>
+                                <span class="badge badge-purple">Slate / UMG</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="type-inspector-body">
+                                    <div class="type-row"><span>Motor Gráfico:</span> <strong class="text-cyan">Unreal Engine 4.26 (Tencent MoreFun Mod)</strong></div>
+                                    <div class="type-row"><span>Proceso Adjuntado:</span> <strong id="lobbyAttachedPkg" class="text-green">com.proximabeta.mf.liteuamo</strong></div>
+                                    <div class="type-row"><span>PID Objetivo:</span> <strong id="lobbyAttachedPid" class="text-yellow">--</strong></div>
+                                    <div class="type-row"><span>Módulo Base libUE4:</span> <strong id="lobbyLibBase" class="text-purple">--</strong></div>
+                                    <div class="type-row"><span>FNamePool Pool:</span> <strong id="lobbyFNamePool" class="text-cyan">--</strong></div>
+                                    <div class="type-row"><span>Modo de Render:</span> <strong>Lobby Scene 3D + UI Viewport</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lobby Memory Inspection Table -->
+                    <div class="card glass-card mt-4">
+                        <div class="card-header">
+                            <h3>🔬 Entidades & Punteros Detectados en el Lobby</h3>
+                            <button class="btn btn-sm btn-secondary" id="btnRefreshLobbyEntities">🔄 Actualizar</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table" id="lobbyEntitiesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Componente</th>
+                                        <th>Dirección en RAM</th>
+                                        <th>Tipo / Offset</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lobbyEntitiesBody">
+                                    <tr><td colspan="5" class="empty-state">Haz clic en "Escanear Datos del Lobby" para resolver las estructuras</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3.8: FILE TRANSFER & STORAGE MANAGER -->
+                <section class="tab-content" id="tab-files">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>📁 Remote Device File Manager & Safe Storage</h3>
+                            <div class="header-actions">
+                                <button class="btn btn-sm btn-purple" id="btnPushLiveUpdate">🚀 Push Live Update (Hot-Reload)</button>
+                                <button class="btn btn-sm btn-secondary" id="btnFsGoUp">⬆️ Up</button>
+                                <button class="btn btn-sm btn-secondary" id="btnFsRefresh">🔄 Refresh</button>
+                                <button class="btn btn-sm btn-primary" id="btnFsNewFolder">➕ New Folder</button>
+                                <button class="btn btn-sm btn-success" id="btnFsUpload">⬆️ Upload File</button>
+                                <input type="file" id="fsFileInput" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Quick Shortcuts & Protection Settings -->
+                            <div class="form-row mb-3" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="btn btn-sm btn-secondary" onclick="loadFsDirectory('/data/local/tmp/')">📍 /tmp/</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="loadFsDirectory('/data/local/tmp/dumps/')">📂 /dumps/</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="loadFsDirectory('/sdcard/')">📱 /sdcard/</button>
+                                </div>
+                                <label class="checkbox-container" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--accent-green);">
+                                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green);"></span>
+                                    Collision Shield Active (Never Overwrites Files)
+                                </label>
+                            </div>
+                            <!-- Current Path Navigation Bar -->
+                            <div class="form-row mb-3" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="fsCurrentPathInput" value="/data/local/tmp/" class="search-input flex-4" placeholder="/data/local/tmp/">
+                                <button class="btn btn-primary flex-1" id="btnFsNavigate">Go</button>
+                            </div>
+
+                            <!-- Transfer Status Banner -->
+                            <div id="transferStatusBox" class="alert-box mb-3" style="display: none; padding: 10px 14px; border-radius: 6px; background: rgba(0, 240, 255, 0.1); border: 1px solid var(--accent-cyan); margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                    <span id="transferFileName" class="text-cyan font-mono" style="font-size: 12px;">Transferring...</span>
+                                    <span id="transferSpeed" class="text-green font-mono" style="font-size: 12px;">-- MB/s</span>
+                                </div>
+                                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                                    <div id="transferProgressBar" style="width: 0%; height: 100%; background: var(--accent-cyan); transition: width 0.2s;"></div>
+                                </div>
+                            </div>
+
+                            <!-- File List Table -->
+                            <div class="table-responsive">
+                                <table class="data-table" id="fileTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Name</th>
+                                            <th>Size</th>
+                                            <th>Permissions</th>
+                                            <th>Modified</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fileTableBody">
+                                        <tr><td colspan="6" class="empty-state">Loading directory contents...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: HEX & MEMORY INSPECTOR -->
+                <section class="tab-content" id="tab-hexview">
+                    <div class="hex-toolbar glass-panel">
+                        <div class="toolbar-group">
+                            <label>Address / Offset:</label>
+                            <input type="text" id="hexAddressInput" placeholder="0x7d12340000 or libUE4.so+0xEDE48C0" class="input-address">
+                            <label>Size:</label>
+                            <select id="hexSizeSelect" class="select-size">
+                                <option value="64">64 Bytes</option>
+                                <option value="128" selected>128 Bytes</option>
+                                <option value="256">256 Bytes</option>
+                                <option value="512">512 Bytes</option>
+                                <option value="1024">1 KB</option>
+                            </select>
+                            <button class="btn btn-primary" id="btnReadHex">Read Memory</button>
+                        </div>
+                        <div class="toolbar-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="chkAutoRefresh">
+                                <span class="checkmark"></span>
+                                Live Auto-Refresh
+                            </label>
+                            <select id="autoRefreshInterval" class="select-sm">
+                                <option value="200">200 ms</option>
+                                <option value="500" selected>500 ms</option>
+                                <option value="1000">1.0 s</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="hex-inspector-layout">
+                        <!-- Hex Dump Panel -->
+                        <div class="card glass-card flex-2">
+                            <div class="card-header">
+                                <h3>🔬 Memory Hex Dump</h3>
+                                <span class="addr-badge" id="currentViewingAddr">0x0</span>
+                            </div>
+                            <div class="card-body hex-view-body" id="hexViewContainer">
+                                <div class="hex-placeholder">Enter an address or click "Inspect" on any module to view memory</div>
+                            </div>
+                        </div>
+
+                        <!-- Data Type Inspector -->
+                        <div class="card glass-card flex-1">
+                            <div class="card-header">
+                                <h3>📊 Type Breakdown</h3>
+                                <span class="badge badge-purple" id="selectedByteOffset">+0x00</span>
+                            </div>
+                            <div class="card-body type-inspector-body">
+                                <div class="type-row"><span>Int8:</span> <strong id="t_int8">--</strong></div>
+                                <div class="type-row"><span>UInt8 (Hex):</span> <strong id="t_uint8">--</strong></div>
+                                <div class="type-row"><span>Int16 (LE):</span> <strong id="t_int16">--</strong></div>
+                                <div class="type-row"><span>UInt16:</span> <strong id="t_uint16">--</strong></div>
+                                <div class="type-row"><span>Int32 (LE):</span> <strong id="t_int32">--</strong></div>
+                                <div class="type-row"><span>UInt32:</span> <strong id="t_uint32">--</strong></div>
+                                <div class="type-row"><span>Int64:</span> <strong id="t_int64">--</strong></div>
+                                <div class="type-row"><span>UInt64 / Ptr:</span> <strong id="t_uint64" class="text-cyan">--</strong></div>
+                                <div class="type-row"><span>Float:</span> <strong id="t_float">--</strong></div>
+                                <div class="type-row"><span>Double:</span> <strong id="t_double">--</strong></div>
+                                <div class="type-row"><span>ASCII:</span> <strong id="t_ascii">--</strong></div>
+                                
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-secondary w-full" id="btnFollowPointer">Follow Pointer</button>
+                                </div>
+
+                                <div class="patch-box mt-3">
+                                    <h4>Patch Memory Bytes</h4>
+                                    <input type="text" id="patchHexInput" placeholder="Hex bytes e.g. 1F 20 03 D5">
+                                    <button class="btn btn-sm btn-danger mt-2 w-full" id="btnWritePatch">Write Patch</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 5: POINTER CHAINS -->
+                <section class="tab-content" id="tab-ptrchain">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🧬 Multi-Level Pointer Chain Resolver</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group flex-2">
+                                    <label>Base Address or Module (e.g. libUE4.so+0xEDE48C0 or 0x7d12340000)</label>
+                                    <input type="text" id="ptrBaseInput" placeholder="libUE4.so+0xEDE48C0">
+                                </div>
+                                <div class="form-group flex-2">
+                                    <label>Offsets (space separated, e.g. 0x10 0x28 0x0 0x180)</label>
+                                    <input type="text" id="ptrOffsetsInput" placeholder="0x10 0x28 0x0">
+                                </div>
+                                <div class="form-group flex-1 btn-align-bottom">
+                                    <button class="btn btn-primary w-full" id="btnResolvePtr">Resolve Chain</button>
+                                </div>
+                            </div>
+
+                            <div class="ptr-tree-container mt-4" id="ptrTreeContainer">
+                                <div class="empty-state">Enter a base address and offsets to resolve pointer chain</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 6: PATTERN SCANNER -->
+                <section class="tab-content" id="tab-scanner">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🔎 Signature & String Memory Scanner</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group flex-2">
+                                    <label>Ámbito / Módulo</label>
+                                    <select id="scanScopeSelect" class="select-size" style="width: 100%; height: 38px;">
+                                        <option value="ALL">🌐 Toda la Memoria (All RAM / Heap / Anonymous)</option>
+                                        <option value="libUE4.so" selected>libUE4.so (Motor Principal)</option>
+                                        <option value="libINTLCore.so">libINTLCore.so (Tencent Auth / Perfil)</option>
+                                        <option value="libINTLGameNative.so">libINTLGameNative.so</option>
+                                        <option value="CUSTOM">Módulo personalizado...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group flex-2" id="customModGroup" style="display: none;">
+                                    <label>Nombre Módulo .so</label>
+                                    <input type="text" id="scanModuleInput" value="libUE4.so" placeholder="libUE4.so">
+                                </div>
+                                <div class="form-group flex-3">
+                                    <label>Patrón Hex (o Texto ASCII)</label>
+                                    <input type="text" id="scanPatternInput" placeholder="Ej: 4A 6F 68 6E... o 'Johncake'">
+                                </div>
+                                <div class="form-group flex-1 btn-align-bottom">
+                                    <button class="btn btn-primary w-full" id="btnStartScan">🔍 Escanear RAM</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive mt-4">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Match Address</th>
+                                            <th>Relative to Module Base</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scanResultsBody">
+                                        <tr><td colspan="4" class="empty-state">No scan results yet</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 7: MCP ASSISTANT TOOLS -->
+                <section class="tab-content" id="tab-mcp">
+                    <div class="grid-2col">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🤖 Antigravity AI MCP Integration</h3>
+                                <span class="badge badge-green">Ready</span>
+                            </div>
+                            <div class="card-body">
+                                <p>Copia y pega la configuración en tu archivo <code>mcp_config.json</code>:</p>
+                                
+                                <div style="margin-top: 10px;">
+                                    <div style="font-size: 11px; font-weight: bold; color: var(--text-secondary); margin-bottom: 4px;">🔹 SI YA TIENES OTROS MCPS (pega esto dentro de <code>"mcpServers": { ... }</code>):</div>
+                                    <div class="code-box" style="margin-bottom: 10px;">
+                                        <pre><code id="mcpSingleSnippet">    "android-memory": {
+      "command": "node",
+      "args": [
+        "C:\\\\Users\\\\Usuario\\\\Documents\\\\C\\\\AB\\\\ConexionCOnCel_tool\\\\pc_client\\\\server\\\\mcp_server.js"
+      ]
+    }</code></pre>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary mb-3" id="btnCopySingleMcp">📋 Copiar Entrada Individual (Para unir con otros MCPs)</button>
+                                </div>
+
+                                <div style="margin-top: 15px;">
+                                    <div style="font-size: 11px; font-weight: bold; color: var(--text-secondary); margin-bottom: 4px;">🔹 CONFIGURACIÓN COMPLETA (Para archivo nuevo):</div>
+                                    <div class="code-box">
+                                        <pre><code id="mcpConfigSnippet">{
+  "mcpServers": {
+    "android-memory": {
+      "command": "node",
+      "args": [
+        "C:\\\\Users\\\\Usuario\\\\Documents\\\\C\\\\AB\\\\ConexionCOnCel_tool\\\\pc_client\\\\server\\\\mcp_server.js"
+      ]
+    }
+  }
+}</code></pre>
+                                    </div>
+                                    <button class="btn btn-sm btn-secondary mt-2" id="btnCopyMcpConfig">📋 Copiar Archivo Completo</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🛠️ Registered MCP Tools</h3>
+                            </div>
+                            <div class="card-body tool-list" id="mcpToolList">
+                                <!-- Dynamic MCP tools loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 8: DIAGNOSTIC & CONSOLE LOGS -->
+                <section class="tab-content" id="tab-logs">
+                    <div class="grid-2col" style="grid-template-columns: 1.3fr 1fr; gap: 16px;">
+                        <!-- Daemon Logs Panel -->
+                        <div class="card glass-card h-full">
+                            <div class="card-header">
+                                <h3>📱 Daemon C++ (Kernel & Memory Logs)</h3>
+                                <div class="header-actions">
+                                    <select id="logLevelFilter" class="select-sm">
+                                        <option value="0">All Levels (DEBUG+)</option>
+                                        <option value="1" selected>INFO & Higher</option>
+                                        <option value="2">WARN & Higher</option>
+                                        <option value="3">ERRORS Only</option>
+                                    </select>
+                                    <input type="text" id="logSearchInput" class="search-input" placeholder="Filtrar errno, archivo..." style="max-width: 140px;">
+                                    <button class="btn btn-sm btn-primary" id="btnFetchDeviceLogs">Actualizar</button>
+                                    <label class="checkbox-container" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; white-space: nowrap;">
+                                        <input type="checkbox" id="chkAutoPollLogs" checked>
+                                        Live (1s)
+                                    </label>
+                                    <button class="btn btn-sm btn-secondary" id="btnClearLogs">Limpiar</button>
+                                </div>
+                            </div>
+                            <div class="card-body console-body" id="deviceLogContainer" style="font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; height: 560px;">
+                                <!-- Live device diagnostic logs formatted here -->
+                            </div>
+                        </div>
+
+                        <!-- Bridge & WebSocket Console Panel -->
+                        <div class="card glass-card h-full">
+                            <div class="card-header">
+                                <h3>⚡ Consola del Puente PC (Eventos & MCP)</h3>
+                                <div class="header-actions">
+                                    <button class="btn btn-sm btn-secondary" id="btnClearBridgeLogs">Limpiar Consola</button>
+                                </div>
+                            </div>
+                            <div class="card-body console-body" id="bridgeLogContainer" style="font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; height: 560px;">
+                                <!-- Live bridge activity logs formatted here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 9: UPDATES & SYSTEM MAINTENANCE -->
+                <section class="tab-content" id="tab-updates">
+                    <div class="grid-2col">
+                        <!-- Daemon Update & Hot-Reload Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🚀 Actualización en Caliente del Daemon (Celular)</h3>
+                                <span class="badge badge-purple" id="updateDaemonBadge">Hot-Reload</span>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
+                                    Transfiere el último binario <code>mem_server.sh</code> al celular vía streaming seguro y ejecuta el reemplazo en memoria sin apagar el daemon.
+                                </p>
+
+                                <div class="btn-group" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="btn btn-primary" id="btnPushQuickUpdate" style="padding: 12px; font-size: 13px; font-weight: bold;">
+                                        ⚡ Subir & Aplicar Hot-Update al Celular
+                                    </button>
+                                    <button class="btn btn-purple" id="btnRebuildAndPush" style="padding: 12px; font-size: 13px; font-weight: bold;">
+                                        🔨 Recompilar NDK C++ & Actualizar Celular (1-Click)
+                                    </button>
+                                </div>
+
+                                <div class="connection-tip" style="margin-top: 15px;">
+                                    <p><strong>🛡️ Zero Downtime:</strong> Si la nueva compilación fallara por cualquier motivo, el daemon revierte automáticamente a la versión anterior sin interrumpir tu sesión.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Client PC & Network Reload Card -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>💻 Cliente PC & Estado de Red</h3>
+                                <span class="badge badge-green" id="updateClientBadge">Auto-Health</span>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
+                                    Reinicia los sockets del puente, limpia la caché de procesos y re-sincroniza el túnel USB / Wi-Fi para prevenir errores de desconexión.
+                                </p>
+
+                                <div class="btn-group" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="btn btn-secondary" id="btnReloadClientBridge" style="padding: 12px; font-size: 13px; font-weight: bold;">
+                                        🔄 Re-sincronizar Puente PC (Reset Sockets)
+                                    </button>
+                                    <button class="btn btn-secondary" id="btnReloadWebUi" style="padding: 12px; font-size: 13px; font-weight: bold;">
+                                        🌐 Recargar Interfaz Web (F5 Hard-Refresh)
+                                    </button>
+                                </div>
+
+                                <div class="status-metrics-grid mt-4" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div class="metric-box">
+                                        <span class="metric-title">Versión Cliente</span>
+                                        <span class="metric-value text-cyan" id="sysClientVer">2.5.0-Turbo</span>
+                                    </div>
+                                    <div class="metric-box">
+                                        <span class="metric-title">Binario C++ Local</span>
+                                        <span class="metric-value text-green" id="sysBinaryStatus">Listo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Activity Log Box -->
+                    <div class="card glass-card mt-4">
+                        <div class="card-header">
+                            <h3>📋 Registro de Actualización & Hot-Reload</h3>
+                            <button class="btn btn-sm btn-secondary" id="btnClearUpdateLogs">Limpiar</button>
+                        </div>
+                        <div class="card-body console-body" id="updateLogContainer" style="font-family: var(--font-mono); font-size: 12px; height: 220px; line-height: 1.6;">
+                            <div class="log-entry log-info"><span class="log-tag tag-info">SISTEMA</span> Actualizador listo. Presiona cualquiera de los botones para actualizar el daemon o el cliente.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: VM::TransformEncrypt Decryption -->
+                <section class="tab-content" id="tab-vmdecrypt">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🔐 VM::TransformEncrypt — Hook &amp; Decryption Wizard</h3>
+                            <span class="badge badge-yellow" id="vmKeyStatusBadge">SIN CLAVE</span>
+                        </div>
+                        <div class="card-body">
+                            <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">
+                                Arena Breakout cifra cada <code>FTransform</code> (huesos, ComponentToWorld) con <code>VM::TransformEncrypt</code>.
+                                Sigue el wizard de 3 pasos para capturar la clave pública y desencriptar los huesos en tiempo real.
+                            </p>
+
+                            <!-- STEP 1: Pattern Scan -->
+                            <div class="card glass-card mb-3" style="border-left: 3px solid var(--accent-cyan);">
+                                <div class="card-header" style="padding: 10px 16px;">
+                                    <h4 style="margin:0;font-size:14px;">① Localizar VM::TransformEncrypt</h4>
+                                </div>
+                                <div class="card-body" style="padding:12px 16px;">
+                                    <div class="form-row">
+                                        <div class="form-group flex-3">
+                                            <label>Patrón ARM64 (prólogo de función)</label>
+                                            <input type="text" id="vmPatternInput" value="FD 7B BF A9 ?? ?? ?? ?? ?? ?? ?? A9" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group flex-1" style="align-self:flex-end;">
+                                            <button class="btn btn-primary" id="btnVmPatternScan" onclick="vmPatternScan()">🔍 Scan libUE4.so</button>
+                                        </div>
+                                    </div>
+                                    <div id="vmFuncAddrResult" style="margin-top:8px;font-family:var(--font-mono);font-size:12px;color:var(--accent-cyan);"></div>
+                                </div>
+                            </div>
+
+                            <!-- STEP 2: Find capture_buf -->
+                            <div class="card glass-card mb-3" style="border-left: 3px solid var(--accent-purple);">
+                                <div class="card-header" style="padding: 10px 16px;">
+                                    <h4 style="margin:0;font-size:14px;">② Encontrar capture_buf (zona BSS vacía)</h4>
+                                </div>
+                                <div class="card-body" style="padding:12px 16px;">
+                                    <div class="form-row">
+                                        <div class="form-group flex-2">
+                                            <label>Offset desde lib_base (hex)</label>
+                                            <input type="text" id="vmCaptureBufOffset" value="0x50000" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group flex-1" style="align-self:flex-end;">
+                                            <button class="btn btn-secondary" onclick="vmFindCaptureBuf()">🔎 Verificar BSS</button>
+                                        </div>
+                                    </div>
+                                    <div id="vmCaptureBufResult" style="margin-top:8px;font-family:var(--font-mono);font-size:12px;color:var(--accent-purple);"></div>
+                                </div>
+                            </div>
+
+                            <!-- STEP 3: Place Hook & Poll -->
+                            <div class="card glass-card mb-3" style="border-left: 3px solid #f59e0b;">
+                                <div class="card-header" style="padding: 10px 16px;">
+                                    <h4 style="margin:0;font-size:14px;">③ Colocar Hook BRK y Capturar X0-X7</h4>
+                                </div>
+                                <div class="card-body" style="padding:12px 16px;">
+                                    <div class="form-row" style="margin-bottom:8px;">
+                                        <div class="form-group flex-2">
+                                            <label>func_addr (resultado Step 1)</label>
+                                            <input type="text" id="vmHookFuncAddr" placeholder="0x7d1a3bc480" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group flex-2">
+                                            <label>capture_buf (resultado Step 2)</label>
+                                            <input type="text" id="vmHookCaptureBuf" placeholder="0x7d1e000000" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                    </div>
+                                    <div class="btn-group" style="gap:8px;display:flex;flex-wrap:wrap;">
+                                        <button class="btn btn-warning" onclick="vmPlaceHook()" id="btnVmPlaceHook">⚡ Colocar Hook BRK</button>
+                                        <button class="btn btn-primary" onclick="vmPollRegisters()" id="btnVmPoll">📡 Poll Registros (X0-X7)</button>
+                                        <button class="btn btn-secondary" onclick="vmRestoreHook()" id="btnVmRestore">🔓 Restaurar / Desbloquear Juego</button>
+                                    </div>
+                                    <div id="vmHookPollResult" style="margin-top:10px;font-family:var(--font-mono);font-size:12px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;min-height:40px;"></div>
+                                </div>
+                            </div>
+
+                            <!-- STEP 4: KPA / Set Key -->
+                            <div class="card glass-card mb-3" style="border-left: 3px solid var(--accent-green);">
+                                <div class="card-header" style="padding: 10px 16px;">
+                                    <h4 style="margin:0;font-size:14px;">④ Extraer Clave (KPA o Manual)</h4>
+                                </div>
+                                <div class="card-body" style="padding:12px 16px;">
+                                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Known-Plaintext Attack: usa la posición real del local player (RootComp+0x154) como plaintext conocido para deducir la clave XOR.</p>
+                                    <div class="form-row" style="margin-bottom:8px;">
+                                        <div class="form-group flex-3">
+                                            <label>cipher_hex (48 bytes = 96 chars, leer de X2)</label>
+                                            <input type="text" id="vmCipherHex" placeholder="FD7B..." style="font-family:var(--font-mono);font-size:11px;">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group flex-1">
+                                            <label>Local TX (conocido)</label>
+                                            <input type="number" id="vmKpaTx" placeholder="15000.0" step="0.01" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label>Local TY</label>
+                                            <input type="number" id="vmKpaTy" placeholder="20000.0" step="0.01" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label>Local TZ</label>
+                                            <input type="number" id="vmKpaTz" placeholder="1500.0" step="0.01" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group" style="align-self:flex-end;">
+                                            <button class="btn btn-success" onclick="vmRunKpa()">🔬 Ejecutar KPA</button>
+                                        </div>
+                                    </div>
+                                    <div id="vmKpaResult" style="margin-top:10px;font-family:var(--font-mono);font-size:12px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;min-height:36px;"></div>
+
+                                    <hr style="border-color:rgba(255,255,255,0.1);margin:14px 0;">
+                                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">O establece la clave manualmente si ya la conoces:</p>
+                                    <div class="form-row">
+                                        <div class="form-group flex-1">
+                                            <label>Algoritmo</label>
+                                            <select id="vmKeyAlgo" style="font-family:var(--font-mono);font-size:12px;background:rgba(0,0,0,0.5);color:var(--text-primary);border:1px solid var(--border-color);border-radius:6px;padding:6px;">
+                                                <option value="XOR_FIXED">XOR_FIXED</option>
+                                                <option value="XOR_NONCE">XOR_NONCE</option>
+                                                <option value="AES_ECB">AES_ECB</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group flex-3">
+                                            <label>Key bytes (hex)</label>
+                                            <input type="text" id="vmManualKeyHex" placeholder="deadbeef" style="font-family:var(--font-mono);font-size:12px;">
+                                        </div>
+                                        <div class="form-group" style="align-self:flex-end;">
+                                            <button class="btn btn-primary" onclick="vmSetKey()">💾 Set Key</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Key Status & Bone Reader -->
+                            <div class="grid-2col">
+                                <div class="card glass-card">
+                                    <div class="card-header" style="padding:10px 16px;"><h4 style="margin:0;font-size:14px;">Estado de Clave Activa</h4></div>
+                                    <div class="card-body" style="padding:12px 16px;">
+                                        <button class="btn btn-secondary btn-sm mb-2" onclick="vmKeyStatus()" style="margin-right:8px;">🔄 Refresh</button>
+                                        <button class="btn btn-danger btn-sm mb-2" onclick="vmClearKey()">🗑 Clear Key</button>
+                                        <div id="vmKeyStatusResult" style="font-family:var(--font-mono);font-size:12px;margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;min-height:60px;">Sin clave activa.</div>
+                                    </div>
+                                </div>
+                                <div class="card glass-card">
+                                    <div class="card-header" style="padding:10px 16px;"><h4 style="margin:0;font-size:14px;">🦴 Lector de Huesos (get_bone)</h4></div>
+                                    <div class="card-body" style="padding:12px 16px;">
+                                        <div class="form-row" style="margin-bottom:8px;">
+                                            <div class="form-group flex-2">
+                                                <label>SkeletalMesh ptr (hex)</label>
+                                                <input type="text" id="vmBoneSkelPtr" placeholder="0x..." style="font-family:var(--font-mono);font-size:12px;">
+                                            </div>
+                                            <div class="form-group flex-1">
+                                                <label>Bone Idx (82=cabeza)</label>
+                                                <input type="number" id="vmBoneIdx" value="82" style="font-family:var(--font-mono);font-size:12px;">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm" onclick="vmGetBone()">🦴 Leer Hueso</button>
+                                        <div id="vmBoneResult" style="font-family:var(--font-mono);font-size:12px;margin-top:8px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;min-height:40px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
