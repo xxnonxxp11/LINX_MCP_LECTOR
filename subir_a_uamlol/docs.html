@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Técnica — LINX MCP LECTOR | uam.lol/docs</title>
+    <meta name="description" content="Manual maestro de arquitectura, catálogo de herramientas MCP para IA, ingeniería inversa de Unreal Engine 4 y protocolos de ejecución.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #06090e;
+            --bg-surface: #0b111a;
+            --bg-card: rgba(13, 20, 31, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 240, 255, 0.35);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --cyan: #00f0ff;
+            --blue: #38bdf8;
+            --purple: #a855f7;
+            --emerald: #10b981;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            background-image: 
+                radial-gradient(circle at 80% 10%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.06) 0%, transparent 35%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            fill: none !important;
+            stroke: var(--cyan) !important;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Navbar */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 14, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        .brand span {
+            color: var(--cyan);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        .btn-nav-repo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            border-radius: var(--radius-sm);
+            color: var(--cyan) !important;
+            font-size: 0.85rem;
+            font-weight: 700 !important;
+        }
+
+        /* Layout */
+        .docs-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            padding: 40px 0 80px;
+            align-items: start;
+        }
+
+        /* Sidebar */
+        .docs-sidebar {
+            position: sticky;
+            top: 80px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--cyan);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 2px solid var(--cyan);
+        }
+
+        /* Main Content */
+        .docs-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 40px;
+            min-width: 0;
+        }
+
+        .doc-section {
+            margin-bottom: 50px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .doc-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .doc-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--cyan);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .doc-section h2 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .doc-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 24px 0 10px;
+            color: var(--blue);
+        }
+
+        .doc-section p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+        }
+
+        .doc-section ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .doc-section ul li {
+            position: relative;
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+
+        .doc-section ul li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--cyan);
+            font-weight: bold;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #030508;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin: 14px 0;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #38bdf8;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-family: var(--font-main);
+            font-weight: 700;
+        }
+
+        .copy-btn:hover {
+            background: var(--cyan);
+            color: #000;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.88rem;
+        }
+
+        .data-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--cyan);
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .data-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tool-name-cell {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            background: #030508;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        @media (max-width: 900px) {
+            .docs-layout { grid-template-columns: 1fr; }
+            .docs-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container nav-inner">
+            <a href="mcp.html" class="brand">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <div>LINX <span>MCP LECTOR</span> • Docs</div>
+            </a>
+            <div class="nav-links">
+                <a href="mcp.html">Inicio / Landing</a>
+                <a href="https://uam.lol/c" target="_blank">Comunidad uam.lol/c</a>
+                <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn-nav-repo">
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container docs-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar">
+            <span class="sidebar-title">Índice del Manual</span>
+            <ul class="sidebar-nav">
+                <li><a href="#intro" class="active">1. Introducción y Arquitectura</a></li>
+                <li><a href="#stealth">2. Zero-Injection & Stealth</a></li>
+                <li><a href="#ue4">3. Motor Unreal Engine 4</a></li>
+                <li><a href="#mcp">4. Catálogo de Tools MCP (IA)</a></li>
+                <li><a href="#elffixer">5. ELF Fixer (IDA & Ghidra)</a></li>
+                <li><a href="#hottuning">6. Calibración de Offsets</a></li>
+                <li><a href="#quickstart">7. Puesta en Marcha Rápida</a></li>
+            </ul>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="docs-content">
+            
+            <!-- SECTION 1: INTRO -->
+            <section class="doc-section" id="intro">
+                <span class="doc-tag">CAPÍTULO 01</span>
+                <h2>Introducción y Arquitectura General</h2>
+                <p>
+                    <strong>LINX_MCP_LECTOR</strong> es una plataforma de análisis de memoria externa diseñada específicamente para videojuegos desarrollados sobre <strong>Unreal Engine 4</strong> en la arquitectura <strong>Android ARM64</strong>.
+                </p>
+                <p>
+                    El sistema desacopla por completo la lectura de memoria de la ejecución del juego mediante tres capas coordinadas:
+                </p>
+                <ul>
+                    <li><strong>Daemon Nativo Android (<code>mem_server.sh</code>)</strong>: Ejecutable binario ELF en C++17 que corre con permisos de Superusuario (Root) e interactúa directamente con el kernel de Android.</li>
+                    <li><strong>Puente PC (<code>device_bridge.js</code> & <code>index.js</code>)</strong>: Servidor Node.js que gestiona el túnel ADB, la telemetría en tiempo real y el Dashboard Web.</li>
+                    <li><strong>Servidor MCP (<code>mcp_server.js</code>)</strong>: Interfaz estándar del Model Context Protocol para asistentes de Inteligencia Artificial (Antigravity IDE, Claude, Gemini).</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 2: STEALTH -->
+            <section class="doc-section" id="stealth">
+                <span class="doc-tag">CAPÍTULO 02</span>
+                <h2>Evasión Stealth y Canales de Memoria</h2>
+                <p>
+                    A diferencia de los métodos de inyección convencionales (`ptrace`, `dlopen`, ganchos inline), LINX_MCP_LECTOR opera con <strong>Cero Inyección en el espacio de memoria del juego</strong>:
+                </p>
+                <h3>1. Lectura por Syscalls Directas ARM64</h3>
+                <p>
+                    Utiliza <code>process_vm_readv</code> (syscall número 270 en ARM64) y <code>pread64</code> sobre <code>/proc/&lt;PID&gt;/mem</code> para extraer estructuras de forma externa.
+                </p>
+                <h3>2. Socket Unix Abstract (@memsvc)</h3>
+                <p>
+                    El daemon no abre ningún puerto TCP en Android (`0.0.0.0:8088`). En su lugar, utiliza un socket abstracto de dominio Unix (`@memsvc`), el cual es completamente invisible a los escaneos de red en <code>/proc/net/tcp</code>. La comunicación con la PC se realiza a través de:
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>ADB Forward Command</span>
+                        <button class="copy-btn" onclick="copySnippet('adb-fwd')">Copiar</button>
+                    </div>
+                    <code id="adb-fwd">adb forward tcp:8088 localabstract:memsvc</code>
+                </div>
+            </section>
+
+            <!-- SECTION 3: UE4 -->
+            <section class="doc-section" id="ue4">
+                <span class="doc-tag">CAPÍTULO 03</span>
+                <h2>Jerarquía de Memoria en Unreal Engine 4</h2>
+                <p>El mapa de objetos se resuelve automáticamente a través de la cadena de punteros:</p>
+                <div class="code-block">
+                    <code style="color: #4ade80;">libUE4.so ➔ GWorld ➔ PersistentLevel (+0x30) ➔ AActors (+0x98) ➔ LocalPlayer / Enemies
+                       │
+                       ├─ RootComponent (+0x158) ➔ Posición 3D (X, Y, Z)
+                       ├─ Mesh (+0x370) ➔ Matriz de Huesos BoneTransforms (+0x5C0)
+                       └─ PlayerState (+0x290) ➔ Nickname y Team ID</code>
+                </div>
+                <h3>Índices de la Matriz de Huesos (Arena Breakout)</h3>
+                <p>Los pares de conexión anatómica en el esqueleto corresponden a:</p>
+                <ul>
+                    <li><code>{15, 82}</code>: Clavícula a Cuello</li>
+                    <li><code>{15, 1}</code>: Clavícula a Pelvis</li>
+                    <li><code>{15, 53} / {53, 54} / {54, 87}</code>: Hombro, Codo y Muñeca Izquierda</li>
+                    <li><code>{15, 23} / {23, 24} / {24, 86}</code>: Hombro, Codo y Muñeca Derecha</li>
+                    <li><code>{1, 2} / {2, 4} / {4, 92}</code>: Cadera, Rodilla y Talón Izquierdo</li>
+                    <li><code>{1, 7} / {7, 9} / {9, 94}</code>: Cadera, Rodilla y Talón Derecho</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 4: MCP TOOLS -->
+            <section class="doc-section" id="mcp">
+                <span class="doc-tag">CAPÍTULO 04</span>
+                <h2>Catálogo de Herramientas MCP para Inteligencia Artificial</h2>
+                <p>Las herramientas JSON-RPC expuestas por <code>mcp_server.js</code> para que los modelos de lenguaje inspeccionen y actúen sobre el juego:</p>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Herramienta</th>
+                            <th>Parámetros</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tool-name-cell">mem_status</td>
+                            <td>(ninguno)</td>
+                            <td>Consulta estado de conexión, modo (USB/Wi-Fi), juego vinculado y PID.</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_ue4_roots</td>
+                            <td>(ninguno)</td>
+                            <td>Obtiene lib_base, FNamePool, GUObjectArray y GWorld.</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_get_world_actors</td>
+                            <td>limit (opt)</td>
+                            <td>Extrae en vivo jugadores, bots, loot y coordenadas 3D (X,Y,Z).</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_inspect_actor</td>
+                            <td>actor_address</td>
+                            <td>Radiografía de Mesh, Huesos, RootComponent, PlayerState y componentes.</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_set_ue4_config</td>
+                            <td>key, value</td>
+                            <td>Hot-Tuning en tiempo real de offsets ("camera", "actors", "mesh", "root").</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_set_draw_config</td>
+                            <td>key, value</td>
+                            <td>Control en vivo del HUD ESP ("box", "skeleton", "radar", "loot", "fov").</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_write_typed</td>
+                            <td>address, type, value</td>
+                            <td>Escritura tipada directa en RAM (float, int32, vec3, string).</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_patch / restore</td>
+                            <td>address, hex_patch</td>
+                            <td>Aplica parches ARM64 con copia de seguridad y reversión instantánea.</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name-cell">mem_dump_fixed_elf</td>
+                            <td>module, output_path</td>
+                            <td>Vuelca y repara cabeceras de libUE4.so para abrir en IDA Pro o Ghidra.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION 5: ELF FIXER -->
+            <section class="doc-section" id="elffixer">
+                <span class="doc-tag">CAPÍTULO 05</span>
+                <h2>ELF Fixer: Reconstrucción de librerías para IDA Pro y Ghidra</h2>
+                <p>
+                    Cuando los sistemas de protección borran las cabeceras `Elf64_Phdr` y las secciones dinámicas en la memoria RAM, el módulo <code>elf_fixer.cpp</code> ejecuta:
+                </p>
+                <ul>
+                    <li>Escaneo de segmentos de código ejecutable (<code>.text</code>) y datos (<code>.rodata</code>, <code>.data</code>, <code>.bss</code>).</li>
+                    <li>Reconstrucción de la tabla de secciones `SHT_PROGBITS` y `SHT_NOBITS`.</li>
+                    <li>Restauración del bloque `DT_STRTAB` y `DT_SYMTAB` para nombrar funciones.</li>
+                    <li>Generación de un archivo <code>.so</code> 100% válido y analizable en desensambladores.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 6: HOT TUNING -->
+            <section class="doc-section" id="hottuning">
+                <span class="doc-tag">CAPÍTULO 06</span>
+                <h2>Calibración Dinámica de Offsets (Hot-Tuning)</h2>
+                <p>
+                    No es necesario recompilar el código C++ cuando se actualiza el juego. Mediante la Web UI o la IA se pueden sobreescribir las claves:
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Configuración de Offsets en Caliente</span>
+                    </div>
+                    <code>"camera"           ➔ ViewProjection / Matriz POV (Default: 0x1100)
+"persistent_level" ➔ Puntero ULevel (Default: 0x30)
+"actors"           ➔ Array TArray&lt;AActor*&gt; (Default: 0x98)
+"root_comp"        ➔ USceneComponent* (Default: 0x158)
+"mesh"             ➔ USkeletalMeshComponent* (Default: 0x370)
+"bone_array"       ➔ Matriz de Huesos (Default: 0x5C0)</code>
+                </div>
+            </section>
+
+            <!-- SECTION 7: QUICKSTART -->
+            <section class="doc-section" id="quickstart">
+                <span class="doc-tag">CAPÍTULO 07</span>
+                <h2>Puesta en Marcha Rápida</h2>
+                <p>Resumen de ejecución en 3 pasos:</p>
+                <ul>
+                    <li><strong>1. Celular</strong>: Conectar cable USB (Depuración USB activa), copiar <code>mem_server.sh</code> a <code>/data/local/tmp/</code> con permisos <code>777</code> en MT Manager y ejecutar con Root.</li>
+                    <li><strong>2. PC</strong>: Doble clic en <code>start_client.bat</code> en la carpeta <code>pc_client/</code>.</li>
+                    <li><strong>3. IA</strong>: Añadir <code>mcp_server.js</code> en <code>mcp_config.json</code>.</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            LINX_MCP_LECTOR • Proyecto Open Source • <a href="https://uam.lol/c" target="_blank">uam.lol/c</a> • <a href="mcp.html">Volver a la Web Principal</a>
+        </div>
+    </footer>
+
+    <script>
+        function copySnippet(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText);
+            alert('¡Comando copiado al portapapeles!');
+        }
+
+        // Active sidebar link highlighting
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.doc-section');
+            const scrollPos = window.scrollY + 120;
+
+            sections.forEach(sec => {
+                const top = sec.offsetTop;
+                const height = sec.offsetHeight;
+                const id = sec.getAttribute('id');
+                if (scrollPos >= top && scrollPos < top + height) {
+                    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+                    const activeLink = document.querySelector(`.sidebar-nav a[href="#${id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
