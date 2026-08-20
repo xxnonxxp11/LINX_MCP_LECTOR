@@ -1,6 +1,6 @@
 # 🤝 Guía de Contribución: LINX_MCP_LECTOR
 
-> **Powered by [uam.lol/c](https://uam.lol/c)**
+> **Powered by [uam.lol/j](https://uam.lol/j)**
 
 ¡Gracias por tu interés en contribuir a **LINX_MCP_LECTOR**! Este es un proyecto Open Source creado para que la comunidad de desarrollo, reverse engineering e Inteligencia Artificial pueda investigar y crear herramientas de lectura de memoria en Android.
 
@@ -43,4 +43,4 @@
 * Mantén el respeto y la colaboración en todos los issues y discusiones.
 * Este proyecto se distribuye con fines educativos, de investigación y desarrollo de software.
 
-> Comunidad y soporte: **[uam.lol/c](https://uam.lol/c)**
+> Comunidad y soporte: **[uam.lol/j](https://uam.lol/j)**

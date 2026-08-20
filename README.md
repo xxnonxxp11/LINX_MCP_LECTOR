@@ -8,7 +8,7 @@
 [![Engine: Unreal Engine 4](https://img.shields.io/badge/Engine-Unreal%20Engine%204-0E1128.svg?logo=unrealengine&logoColor=white)](https://github.com/)
 [![MCP: Model Context Protocol](https://img.shields.io/badge/MCP-Protocol%20Ready-6366f1.svg)](https://modelcontextprotocol.io/)
 [![C++17: NDK](https://img.shields.io/badge/C%2B%2B-17%20ARM64-blue.svg?logo=c%2B%2B&logoColor=white)](https://github.com/)
-[![Community](https://img.shields.io/badge/Community-uam.lol%2Fc-ff007a.svg)](https://uam.lol/c)
+[![Community](https://img.shields.io/badge/Community-uam.lol%2Fc-ff007a.svg)](https://uam.lol/j)
 
 **Una solución Open Source integral de lectura e inspección de memoria externa (Zero-Injection) para Android ARM64, con renderizado acelerado por Vulkan 1.1 + ImGui, Dashboard Web interactivo y servidor de Inteligencia Artificial (MCP) para Antigravity IDE, Claude, Gemini y GPT.**
 
@@ -142,5 +142,5 @@ Revisa la [Guía de Contribución](CONTRIBUTING.md) y envía tu Pull Request.
 
 Este proyecto está bajo la Licencia **[MIT](LICENSE)**.
 
-* 🌐 Sitio Web y Comunidad: **[uam.lol/c](https://uam.lol/c)**
+* 🌐 Sitio Web y Comunidad: **[uam.lol/j](https://uam.lol/j)**
 * 📢 Únete a la conversación y comparte tus mejoras para que el proyecto siga creciendo.

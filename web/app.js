@@ -1,6 +1,6 @@
 // ============================================================
 //  LINX_MCP_LECTOR - Web Landing Page Logic
-//  Powered by: uam.lol/c
+//  Powered by: uam.lol/j
 // ============================================================
 
 const TOOLS_DATA = {

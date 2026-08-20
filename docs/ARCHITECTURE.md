@@ -1,6 +1,6 @@
 # 🏛️ Arquitectura del Sistema: LINX_MCP_LECTOR
 
-> **Powered by: [uam.lol/c](https://uam.lol/c)**
+> **Powered by: [uam.lol/j](https://uam.lol/j)**
 
 **LINX_MCP_LECTOR** es una suite de ingeniería inversa, inspección de memoria en tiempo real y telemetría asistida por Inteligencia Artificial diseñada específicamente para juegos desarrollados en **Unreal Engine 4** en la plataforma **Android ARM64** (con foco en *Arena Breakout Lite* y *Standard*).
 
@@ -108,4 +108,4 @@ El módulo visual no utiliza capas Java ni ventanas flotantes de Android (`Windo
 ---
 
 > Para más detalles sobre el catálogo de herramientas y cómo interactuar con este sistema mediante Inteligencia Artificial, consulta [`AI_MCP_MANUAL.md`](AI_MCP_MANUAL.md).  
-> Enlace del proyecto y comunidad: **[uam.lol/c](https://uam.lol/c)**
+> Enlace del proyecto y comunidad: **[uam.lol/j](https://uam.lol/j)**

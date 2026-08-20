@@ -1,6 +1,6 @@
 # 🧭 Guía de Offsets e Ingeniería Inversa en Unreal Engine 4 (Arena Breakout)
 
-> **LINX_MCP_LECTOR — Powered by [uam.lol/c](https://uam.lol/c)**
+> **LINX_MCP_LECTOR — Powered by [uam.lol/j](https://uam.lol/j)**
 
 Este documento detalla la estructura interna de memoria del motor **Unreal Engine 4** en Android ARM64 para *Arena Breakout*, cómo resolver sus estructuras globales, cómo funciona la calibración de offsets en tiempo real y qué áreas están abiertas para contribuciones de la comunidad.
 
@@ -133,4 +133,4 @@ Si eres desarrollador o investigador de ingeniería inversa, estas son áreas cl
 
 ---
 
-> Más información, tutoriales y comunidad: **[uam.lol/c](https://uam.lol/c)**
+> Más información, tutoriales y comunidad: **[uam.lol/j](https://uam.lol/j)**

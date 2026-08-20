@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 echo =======================================================
 echo   LINX_MCP_LECTOR - BUILD ALL-IN-ONE DAEMON (ARM64)
-echo   Powered by: uam.lol/c
+echo   Powered by: uam.lol/j
 echo =======================================================
 
 SET NDK=
@@ -47,7 +47,7 @@ IF EXIST "libs\arm64-v8a\mem_server.sh" (
     echo 1. Copia 'mem_server.sh' a /data/local/tmp/
     echo 2. En MT Manager dale permisos 777 (rwxrwxrwx)
     echo 3. Toca sobre el archivo y dale a 'Ejecutar' (Root)
-    echo Info & Soporte: uam.lol/c
+    echo Info & Soporte: uam.lol/j
     echo =======================================================
 )
 

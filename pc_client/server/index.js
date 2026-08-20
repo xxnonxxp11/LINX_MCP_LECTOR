@@ -674,7 +674,7 @@ server.listen(PORT, () => {
     console.log(`   [+] LINX_MCP_LECTOR - PC CLIENT & MCP SERVER        `);
     console.log(`   [+] Web UI: http://localhost:${PORT}                `);
     console.log(`   [+] MCP Server Endpoint: http://localhost:${PORT}/mcp `);
-    console.log(`   [+] Powered by: uam.lol/c                           `);
+    console.log(`   [+] Powered by: uam.lol/j                           `);
     console.log(`-------------------------------------------------------`);
     console.log(`   [🤖 CONFIGURACIÓN MCP PARA ANTIGRAVITY / CLAUDE]:   `);
     console.log(`   Añade esta entrada dentro de "mcpServers": { ... } en tu mcp_config.json:`);

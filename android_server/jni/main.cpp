@@ -1,6 +1,6 @@
 // ============================================================
 //  LINX_MCP_LECTOR - Android Root Memory Daemon & ESP Overlay
-//  Powered by: uam.lol/c
+//  Powered by: uam.lol/j
 //  Hilo principal : run_esp_loop() en src/main.cpp (Vulkan+ImGui)
 //  Hilo 2        : TcpServer socket @memsvc (control por PC/USB)
 // ============================================================
@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
     printf("   [+] LINX_MCP_LECTOR - ANDROID ROOT MEMORY DAEMON     \n");
     printf("   [+] Vulkan/ImGui ESP + Socket @memsvc                \n");
     printf("   [+] Pure /proc/mem | Zero Injection | SELinux-Safe   \n");
-    printf("   [+] Info & Community: uam.lol/c                      \n");
+    printf("   [+] Info & Community: uam.lol/j                      \n");
     printf("========================================================\n");
 
     if (getuid() != 0) {

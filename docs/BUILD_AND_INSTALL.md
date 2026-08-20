@@ -1,6 +1,6 @@
 # 🛠️ Guía de Compilación e Instalación: LINX_MCP_LECTOR
 
-> **Powered by [uam.lol/c](https://uam.lol/c)**
+> **Powered by [uam.lol/j](https://uam.lol/j)**
 
 Esta guía explica paso a paso cómo compilar el binario nativo para Android ARM64, cómo ejecutarlo en tu celular con Root usando MT Manager, cómo iniciar el cliente PC y cómo conectar la Inteligencia Artificial vía MCP.
 
@@ -53,7 +53,7 @@ El terminal mostrará:
    [+] LINX_MCP_LECTOR - ANDROID ROOT MEMORY DAEMON     
    [+] Vulkan/ImGui ESP + Socket @memsvc                
    [+] Pure /proc/mem | Zero Injection | SELinux-Safe   
-   [+] Info & Community: uam.lol/c                      
+   [+] Info & Community: uam.lol/j                      
 ========================================================
 [+] ROOT confirmado (UID=0)
 [+] SELinux: Permissive
@@ -104,4 +104,4 @@ Una vez configurado, puedes pedirle a la IA:
 
 ---
 
-> ¿Tienes dudas o problemas de compilación? Visita **[uam.lol/c](https://uam.lol/c)**
+> ¿Tienes dudas o problemas de compilación? Visita **[uam.lol/j](https://uam.lol/j)**

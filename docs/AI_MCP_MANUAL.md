@@ -1,6 +1,6 @@
 # 🤖 Manual y Protocolo MCP de Memoria Android (Unreal Engine 4 & Arena Breakout)
 
-> **LINX_MCP_LECTOR — Powered by [uam.lol/c](https://uam.lol/c)**
+> **LINX_MCP_LECTOR — Powered by [uam.lol/j](https://uam.lol/j)**
 
 Este documento es la **guía maestra y protocolo de ejecución** para Inteligencias Artificiales (Antigravity IDE, Claude, Gemini, GPT) y desarrolladores al operar el sistema de lectura, inspección, diagnóstico, edición y renderizado de memoria en tiempo real para Android ARM64 (Arena Breakout Lite / Standard).
 
@@ -188,4 +188,4 @@ Cuando se desee inspeccionar un jugador específico (`BP_UamCharacter_C` en `0x.
 
 ---
 
-> Más información y actualizaciones: **[uam.lol/c](https://uam.lol/c)**
+> Más información y actualizaciones: **[uam.lol/j](https://uam.lol/j)**

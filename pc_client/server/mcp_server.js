@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // ============================================================
 //  LINX_MCP_LECTOR - Model Context Protocol (MCP) Server for AI
-//  Powered by: uam.lol/c
+//  Powered by: uam.lol/j
 // ============================================================
 const readline = require('readline');
 const deviceBridge = require('./device_bridge');

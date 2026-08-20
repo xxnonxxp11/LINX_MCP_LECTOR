@@ -5,7 +5,7 @@ cd /d "%~dp0"
 echo ========================================================
 echo   LINX_MCP_LECTOR - PC CLIENT & MCP CONTROLLER
 echo   (MODO STEALTH: Unix Abstract Socket @memsvc + ADB)
-echo   Powered by: uam.lol/c
+echo   Powered by: uam.lol/j
 echo ========================================================
 echo.
 
