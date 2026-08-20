@@ -901,107 +901,93 @@
             </div>
 
             <div class="pipeline-flow">
-                <!-- STEP 0: ADB Connection -->
+                <!-- STEP 01: Connect USB/ADB -->
                 <div class="flow-step">
                     <div class="flow-step-header">
                         <div class="step-number-badge">01</div>
                         <div class="step-title-box">
                             <h3>
                                 <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                                Conectar el Celular a la PC vía ADB
+                                Conectar el Celular a la PC vía Cable USB
                             </h3>
-                            <p>Activa la <strong>Depuración USB</strong> en Opciones de desarrollador de tu celular Android y conéctalo mediante cable USB o Wi-Fi.</p>
+                            <p>Conecta tu teléfono Android a la PC mediante cable USB con la <strong>Depuración USB activada</strong> (en Opciones de desarrollador).</p>
                         </div>
                     </div>
-                    <div class="terminal-box">
+                    <div class="terminal-box" style="color: #38bdf8;">
                         <div class="terminal-top-bar">
                             <div class="terminal-dots">
                                 <span class="tdot tdot-red"></span>
                                 <span class="tdot tdot-yellow"></span>
                                 <span class="tdot tdot-green"></span>
                             </div>
-                            <span class="terminal-title">CMD / Terminal PC</span>
-                            <button class="copy-trigger" onclick="copyTerminal('cmd-step0')">
-                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                <span>Copiar</span>
-                            </button>
+                            <span class="terminal-title">Requisito Previo</span>
                         </div>
-                        <code id="cmd-step0"><span class="cmt"># 1. Comprobar que ADB detecta tu celular</span>
-adb devices
-
-<span class="cmt"># (Opcional si usas Wi-Fi) Conectar vía depuración inalámbrica:</span>
-adb connect 192.168.1.XX:5555</code>
+                        <code>📱 Cable USB conectado entre el celular y la computadora
+✅ Depuración USB habilitada en el móvil
+⚡ ADB detectará tu dispositivo automáticamente sin configuraciones complejas</code>
                     </div>
                 </div>
 
-                <!-- STEP 1: Execute binary on phone -->
+                <!-- STEP 02: MT Manager & 777 Root Execution -->
                 <div class="flow-step">
                     <div class="flow-step-header">
                         <div class="step-number-badge">02</div>
                         <div class="step-title-box">
                             <h3>
                                 <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                                Copiar y Ejecutar el Servidor en Android (Root)
+                                MT Manager: Permiso 777 y Ejecutar (Root)
                             </h3>
-                            <p>Transfiere el archivo binario compilado <code>mem_server.sh</code> a tu móvil, asígnale permisos completos y ejecútalo con Root.</p>
+                            <p>Copia el binario compilado <code>mem_server.sh</code> a la memoria del móvil y dale permisos completos en MT Manager.</p>
                         </div>
                     </div>
-                    <div class="terminal-box">
+                    <div class="terminal-box" style="color: #4ade80;">
                         <div class="terminal-top-bar">
                             <div class="terminal-dots">
                                 <span class="tdot tdot-red"></span>
                                 <span class="tdot tdot-yellow"></span>
                                 <span class="tdot tdot-green"></span>
                             </div>
-                            <span class="terminal-title">MT Manager / ADB Shell</span>
+                            <span class="terminal-title">Pasos en MT Manager (Android Root)</span>
                             <button class="copy-trigger" onclick="copyTerminal('cmd-step1')">
                                 <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                                 <span>Copiar</span>
                             </button>
                         </div>
-                        <code id="cmd-step1"><span class="cmt"># Copiar binario a la memoria interna del teléfono:</span>
-adb push android_server/libs/arm64-v8a/mem_server.sh /data/local/tmp/
-
-<span class="cmt"># En MT Manager: Da permisos 777 (rwxrwxrwx) y dale a "Ejecutar" con Root</span>
-<span class="cmt"># O mediante consola ADB Root:</span>
-adb shell "su -c 'chmod 777 /data/local/tmp/mem_server.sh && /data/local/tmp/mem_server.sh'"</code>
+                        <code id="cmd-step1">1. Copia 'mem_server.sh' en la ruta /data/local/tmp/
+2. En MT Manager: Mantén presionado sobre 'mem_server.sh' ➔ Propiedades ➔ Permisos ➔ Marca 777 (rwxrwxrwx)
+3. Toca sobre 'mem_server.sh' y pulsa "Ejecutar" (concediendo permisos Root)
+4. ¡El daemon quedará activo en segundo plano y abrirá el socket @memsvc!</code>
                     </div>
                 </div>
 
-                <!-- STEP 2: Launch PC Client -->
+                <!-- STEP 03: 1-Click start_client.bat -->
                 <div class="flow-step">
                     <div class="flow-step-header">
                         <div class="step-number-badge">03</div>
                         <div class="step-title-box">
                             <h3>
                                 <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                                Iniciar el Cliente PC y el Túnel ADB Stealth
+                                Doble Clic a start_client.bat (Sin Comandos CMD)
                             </h3>
-                            <p>El cliente enciende el puente <code>device_bridge.js</code>, mapea el socket abstracto <code>@memsvc</code> y levanta el Dashboard Web en el puerto 3000.</p>
+                            <p>No necesitas abrir la consola ni escribir comandos. Solo haz doble clic en <code>start_client.bat</code>.</p>
                         </div>
                     </div>
-                    <div class="terminal-box">
+                    <div class="terminal-box" style="color: #00f0ff;">
                         <div class="terminal-top-bar">
                             <div class="terminal-dots">
                                 <span class="tdot tdot-red"></span>
                                 <span class="tdot tdot-yellow"></span>
                                 <span class="tdot tdot-green"></span>
                             </div>
-                            <span class="terminal-title">PC Launcher</span>
-                            <button class="copy-trigger" onclick="copyTerminal('cmd-step2')">
-                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                <span>Copiar</span>
-                            </button>
+                            <span class="terminal-title">Lanzamiento en 1 Clic</span>
                         </div>
-                        <code id="cmd-step2">cd pc_client
-npm install
-start_client.bat
-
-<span class="cmt"># Abre automáticamente http://localhost:3000 con 13 pestañas interactivas</span></code>
+                        <code>🖱️ 1. Entra a la carpeta 'pc_client' y haz doble clic sobre 'start_client.bat'
+⚡ 2. El archivo .bat conecta ADB, crea el túnel stealth y abre la Web UI automáticamente
+🌐 3. Se abrirá de inmediato tu navegador en: http://localhost:3000 (13 pestañas de control)</code>
                     </div>
                 </div>
 
-                <!-- STEP 3: Connect AI (MCP) -->
+                <!-- STEP 04: AI MCP Server -->
                 <div class="flow-step">
                     <div class="flow-step-header">
                         <div class="step-number-badge">04</div>
@@ -1010,7 +996,7 @@ start_client.bat
                                 <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                 Vincular tu Inteligencia Artificial (MCP Server)
                             </h3>
-                            <p>Añade la configuración en tu archivo <code>mcp_config.json</code> para que <strong>Antigravity IDE, Claude Desktop o Gemini</strong> tomen el control.</p>
+                            <p>Pega esta configuración en tu archivo <code>mcp_config.json</code> para que <strong>Antigravity IDE, Claude Desktop o Gemini</strong> tomen el control de la memoria.</p>
                         </div>
                     </div>
                     <div class="terminal-box">
