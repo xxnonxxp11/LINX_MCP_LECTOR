@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINX_MCP_LECTOR — Android Stealth Memory Bridge & AI Controller</title>
+    <meta name="description" content="Open Source External Memory Bridge for Android ARM64 with Native Vulkan Overlay, Web Dashboard, and Model Context Protocol (MCP) for AI Assistants.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Glow Elements -->
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">LINX <span class="accent-text">MCP LECTOR</span></span>
+            </a>
+            <nav class="nav-menu">
+                <a href="#features">Características</a>
+                <a href="#architecture">Arquitectura</a>
+                <a href="#mcp-tools">Herramientas MCP</a>
+                <a href="#quickstart">Inicio Rápido</a>
+                <a href="../docs/AI_MCP_MANUAL.md" class="nav-link-docs">Documentación</a>
+                <a href="https://uam.lol/c" target="_blank" class="nav-btn-community">uam.lol/c</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>OPEN SOURCE RELEASE & COMMUNITY EDITION</span>
+                <span class="badge-tag">v2.0 ARM64</span>
+            </div>
+            <h1 class="hero-title">
+                Control de Memoria en Android <br>
+                <span class="gradient-text">Potenciado por Inteligencia Artificial</span>
+            </h1>
+            <p class="hero-subtitle">
+                Puente externo indetectable (Zero-Injection) para Android ARM64, con renderizado acelerado por <strong>Vulkan 1.1 + ImGui</strong>, Web Dashboard en tiempo real y protocolo <strong>MCP</strong> para Antigravity IDE, Claude, Gemini y GPT.
+            </p>
+            <div class="hero-actions">
+                <a href="#quickstart" class="btn btn-primary">
+                    <span>🚀 Comenzar en 3 Pasos</span>
+                </a>
+                <a href="#architecture" class="btn btn-secondary">
+                    <span>🔍 Explorar Arquitectura</span>
+                </a>
+                <a href="https://uam.lol/c" target="_blank" class="btn btn-outline">
+                    <span>🌐 Comunidad uam.lol/c</span>
+                </a>
+            </div>
+
+            <!-- Hero Live Stats Banner -->
+            <div class="stats-banner">
+                <div class="stat-card">
+                    <span class="stat-num">0%</span>
+                    <span class="stat-label">Inyección en Juego (Pure /proc/mem)</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-num">120 FPS</span>
+                    <span class="stat-label">Vulkan 1.1 Native Surface Overlay</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-num">30+</span>
+                    <span class="stat-label">Herramientas MCP para Inteligencias Artificiales</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-num">1-Click</span>
+                    <span class="stat-label">Ejecución con Root en MT Manager</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Visualizer Section -->
+    <section class="section" id="architecture">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">DISEÑO TÉCNICO</span>
+                <h2>Arquitectura de 3 Capas en Tiempo Real</h2>
+                <p>Una integración perfecta entre el kernel de Android, el puente en Node.js y los modelos de lenguaje.</p>
+            </div>
+
+            <div class="arch-visualizer">
+                <div class="arch-node active" data-node="mobile">
+                    <div class="arch-node-header">
+                        <span class="arch-icon">📱</span>
+                        <div>
+                            <h3>1. Celular Android (Root)</h3>
+                            <span class="arch-sub">mem_server.sh (C++ Nativo ARM64)</span>
+                        </div>
+                    </div>
+                    <ul class="arch-features">
+                        <li>Acceso directo por <code>/proc/&lt;pid&gt;/mem</code> y syscalls <code>SYS_vm_readv</code> (270).</li>
+                        <li>Socket abstracto Unix <code>@memsvc</code> invisible para escaneos de red.</li>
+                        <li>Overlay Vulkan + ImGui con dibujo de cajas, esqueleto, radar y loot.</li>
+                        <li>Volcado y reparación de cabeceras <code>libUE4.so</code> para IDA Pro y Ghidra.</li>
+                    </ul>
+                </div>
+
+                <div class="arch-connector">
+                    <div class="connector-line"></div>
+                    <span class="connector-badge">ADB Forward :8088 / Wi-Fi</span>
+                </div>
+
+                <div class="arch-node" data-node="pc">
+                    <div class="arch-node-header">
+                        <span class="arch-icon">💻</span>
+                        <div>
+                            <h3>2. Cliente PC & Web Dashboard</h3>
+                            <span class="arch-sub">Express + WebSocket en :3000</span>
+                        </div>
+                    </div>
+                    <ul class="arch-features">
+                        <li>Túnel automatizado con reconexión instantánea y medición de ping.</li>
+                        <li>Dashboard con 13 módulos: Procesos, Módulos, Radar 3D, Editor Hex y Parches.</li>
+                        <li>Escáner de cadenas de punteros multinivel y firmas AOB (Pattern Scanner).</li>
+                        <li>Gestor remoto de archivos con compresión ZIP/TAR en streaming.</li>
+                    </ul>
+                </div>
+
+                <div class="arch-connector">
+                    <div class="connector-line"></div>
+                    <span class="connector-badge">JSON-RPC / stdio Protocol</span>
+                </div>
+
+                <div class="arch-node" data-node="ai">
+                    <div class="arch-node-header">
+                        <span class="arch-icon">🤖</span>
+                        <div>
+                            <h3>3. Inteligencia Artificial (MCP)</h3>
+                            <span class="arch-sub">Antigravity IDE / Claude / Gemini</span>
+                        </div>
+                    </div>
+                    <ul class="arch-features">
+                        <li>30+ herramientas estandarizadas bajo el Model Context Protocol.</li>
+                        <li>Diagnóstico profundo de actores y componentes <code>mem_inspect_actor</code>.</li>
+                        <li>Calibración en caliente de offsets <code>mem_set_ue4_config</code> sin reiniciar.</li>
+                        <li>Control en vivo del HUD visual del teléfono <code>mem_set_draw_config</code>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Grid -->
+    <section class="section bg-alt" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">CAPACIDADES</span>
+                <h2>Características Principales del Ecosistema</h2>
+                <p>Diseñado para ser modular, indetectable y extensible por la comunidad.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Evasión Stealth (Zero Injection)</h3>
+                    <p>No inyecta archivos <code>.so</code> ni modifica el binario del juego. La lectura de memoria se ejecuta mediante syscalls del kernel de forma externa y limpia.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Unix Abstract Socket (@memsvc)</h3>
+                    <p>En lugar de abrir puertos TCP abiertos detectables por el juego en <code>/proc/net/tcp</code>, utiliza un socket abstracto de dominio Unix canalizado por ADB.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Overlay Nativo Vulkan + ImGui</h3>
+                    <p>Dibuja cajas 2D/3D, esqueletos anatómicos, líneas de visión, distancias y radar a 120 FPS sin usar ventanas flotantes de Android ni capas Java.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Servidor MCP para Asistentes IA</h3>
+                    <p>Permite que inteligencias artificiales lean la memoria en vivo, ajusten matrices de cámara, diagnostiquen offsets y controlen el overlay en tiempo real.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3>ELF Fixer para IDA Pro y Ghidra</h3>
+                    <p>Vuelca librerías <code>libUE4.so</code> desencriptadas directamente desde la RAM y reconstruye sus cabeceras y tablas de secciones corruptas.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Hot-Tuning y Actualización en Vivo</h3>
+                    <p>Calibra offsets de UE4 al vuelo o actualiza el binario en el móvil sin necesidad de cerrar el juego ni desconectar la partida.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Tools Explorer Section -->
+    <section class="section" id="mcp-tools">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">MODEL CONTEXT PROTOCOL</span>
+                <h2>Catálogo de Herramientas para IA</h2>
+                <p>Explora algunas de las más de 30 herramientas disponibles para asistentes de IA.</p>
+            </div>
+
+            <div class="tools-explorer">
+                <div class="tool-tabs">
+                    <button class="tool-tab active" data-category="ue4">🎮 Motor UE4 & Partida</button>
+                    <button class="tool-tab" data-category="memory">✍️ Memoria & Parches</button>
+                    <button class="tool-tab" data-category="process">⚙️ Estado & Procesos</button>
+                    <button class="tool-tab" data-category="files">📁 Archivos & Storage</button>
+                </div>
+
+                <div class="tools-display" id="toolsDisplay">
+                    <!-- Dynamic Tool Cards will be populated by app.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Guide -->
+    <section class="section bg-alt" id="quickstart">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">GUÍA DE INICIO</span>
+                <h2>Puesta en Marcha en 3 Pasos</h2>
+                <p>Configura tu teléfono Android Root y tu computadora en pocos minutos.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-badge">Paso 1</div>
+                    <h3>📱 Celular (Android Root)</h3>
+                    <p>Copia el archivo único a tu móvil y dale permisos completos:</p>
+                    <div class="code-box">
+                        <code>
+                            # 1. Copiar binario a /data/local/tmp/<br>
+                            # 2. En MT Manager: Permisos 777<br>
+                            # 3. Tocar y pulsar "Ejecutar" (Root)
+                        </code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-badge">Paso 2</div>
+                    <h3>💻 Computadora (PC Client)</h3>
+                    <p>Inicia el servidor y el dashboard web con un solo clic:</p>
+                    <div class="code-box">
+                        <code>
+                            cd pc_client<br>
+                            npm install<br>
+                            start_client.bat<br>
+                            # Abre http://localhost:3000
+                        </code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-badge">Paso 3</div>
+                    <h3>🤖 Conectar IA (MCP)</h3>
+                    <p>Agrega la entrada en tu archivo <code>mcp_config.json</code>:</p>
+                    <div class="code-box">
+                        <code>
+                            "linx-memory": {<br>
+                            &nbsp;&nbsp;"command": "node",<br>
+                            &nbsp;&nbsp;"args": [".../mcp_server.js"]<br>
+                            }
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community & Call to Action Banner -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Únete a la Comunidad Open Source</h2>
+            <p>Este proyecto está liberado bajo la Licencia MIT. Comparte tus mejoras de offsets, W2S y telemetría.</p>
+            <div class="cta-actions">
+                <a href="https://uam.lol/c" target="_blank" class="btn btn-primary">
+                    <span>🌐 Visitar uam.lol/c</span>
+                </a>
+                <a href="../docs/AI_MCP_MANUAL.md" class="btn btn-secondary">
+                    <span>📖 Leer Manual de IA</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span class="footer-logo">⚡ LINX_MCP_LECTOR</span>
+                <span class="footer-sub">Open Source Stealth Memory Bridge & AI Controller</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://uam.lol/c" target="_blank" class="footer-link">uam.lol/c</a>
+                <span class="footer-divider">•</span>
+                <a href="../LICENSE" class="footer-link">Licencia MIT</a>
+                <span class="footer-divider">•</span>
+                <a href="../README.md" class="footer-link">README</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
