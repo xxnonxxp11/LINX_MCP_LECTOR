@@ -916,9 +916,9 @@
                 <div class="brand-text">LINX <span>MCP LECTOR</span></div>
             </a>
             <nav class="nav-menu">
-                <a href="#autoupdate">Auto-Update</a>
                 <a href="#instalacion">Instalación</a>
                 <a href="#capacidades">Capacidades</a>
+                <a href="#autoupdate">Auto-Update</a>
                 <a href="#tools">Tools MCP</a>
                 <a href="docs.html">Documentación</a>
                 <a href="https://uam.lol/c" target="_blank">Comunidad uam.lol/c</a>
@@ -955,13 +955,13 @@
                     <svg class="icon" viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
                     <span>Guía de Instalación Rápida</span>
                 </a>
-                <a href="#autoupdate" class="btn btn-secondary">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                    <span>Ver Motor Auto-Update</span>
-                </a>
                 <a href="https://github.com/xxnonxxp11/LINX_MCP_LECTOR" target="_blank" class="btn btn-secondary">
                     <svg class="icon" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
                     <span>GitHub Repo</span>
+                </a>
+                <a href="docs.html" class="btn btn-secondary">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span>Documentación</span>
                 </a>
             </div>
 
@@ -977,14 +977,6 @@
 
                 <div class="metric-card">
                     <div class="metric-icon-wrap">
-                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                    </div>
-                    <div class="metric-value">Hot-Reload</div>
-                    <div class="metric-label">Auto-actualización en caliente en 0.4s sin cerrar juego</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-icon-wrap">
                         <svg class="icon-lg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     </div>
                     <div class="metric-value">120 FPS Vulkan</div>
@@ -993,49 +985,18 @@
 
                 <div class="metric-card">
                     <div class="metric-icon-wrap">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    </div>
+                    <div class="metric-value">Hot-Reload</div>
+                    <div class="metric-label">Auto-actualización en caliente en 0.4s sin cerrar juego</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-wrap">
                         <svg class="icon-lg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
                     </div>
                     <div class="metric-value">30+ Tools MCP</div>
                     <div class="metric-label">Integración JSON-RPC para Antigravity / Claude / GPT</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- EPIC SHOWCASE: ZERO-DOWNTIME AUTO-UPDATER & HOT-RELOAD -->
-    <section class="section" id="autoupdate">
-        <div class="container">
-            <div class="showcase-card">
-                <div class="showcase-content">
-                    <div class="showcase-badge">
-                        <svg class="icon" style="width: 14px; height: 14px; stroke: #d8b4fe !important;" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                        <span>TECNOLOGÍA EXCLUSIVA</span>
-                    </div>
-                    <h3>Motor de Auto-Actualización en Caliente (Hot-Reloading)</h3>
-                    <p>
-                        ¿Modificaste tu código C++ o cambiaste offsets? <strong>No necesitas cerrar el juego, salir de la partida ni reiniciar el teléfono</strong>. El módulo <code>auto_updater.cpp</code> realiza un reemplazo atómico del binario en plena partida.
-                    </p>
-                    <ul class="showcase-list">
-                        <li><strong>Validación Previa en Sandbox</strong>: Prueba el nuevo binario en un subproceso hijo antes de tocar el servidor activo para evitar crasheos.</li>
-                        <li><strong>Traspaso Atómico de Socket</strong>: Transfiere el socket Unix <code>@memsvc</code> al nuevo proceso sin desconectar al cliente PC ni a la IA.</li>
-                        <li><strong>Tiempo de Transición</strong>: Menos de <strong>400 milisegundos</strong> manteniendo tu sesión intacta en Arena Breakout.</li>
-                    </ul>
-                </div>
-
-                <div class="showcase-terminal">
-                    <div class="showcase-terminal-head">
-                        <span style="color: var(--cyan); font-weight: 800;">⚡ AUTO_UPDATER DAEMON LOGS</span>
-                        <span style="color: var(--emerald); font-size: 0.75rem;">● LIVE HOT-RELOAD</span>
-                    </div>
-                    <div style="line-height: 1.8;">
-                        <span style="color: #64748b;">[00:48:12] [UPDATE]</span> Incoming update payload: mem_server_v2.sh<br>
-                        <span style="color: #64748b;">[00:48:12] [UPDATE]</span> Testing candidate binary in subprocess (fork)...<br>
-                        <span style="color: #10b981;">[00:48:12] [UPDATE]</span> Candidate binary validated OK (exit code 0)<br>
-                        <span style="color: #64748b;">[00:48:13] [UPDATE]</span> Atomic swap /data/local/tmp/mem_server.sh...<br>
-                        <span style="color: #a855f7;">[00:48:13] [UPDATE]</span> Transferring @memsvc abstract socket...<br>
-                        <span style="color: #00f0ff; font-weight: 700;">[00:48:13] [UPDATE] [+] HOT-RELOAD SUCCESSFUL (380ms)!</span><br>
-                        <span style="color: #38bdf8;">[00:48:13] [SYS] Game PID: 14250 remains attached & running.</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1243,6 +1204,45 @@
                     </div>
                     <h3>Hot-Tuning en Tiempo Real</h3>
                     <p>Modifica cualquier offset de cámara, actor o componente al vuelo sin reiniciar la partida ni recompilar el binario C++.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EPIC SHOWCASE: ZERO-DOWNTIME AUTO-UPDATER & HOT-RELOAD -->
+    <section class="section section-alt" id="autoupdate">
+        <div class="container">
+            <div class="showcase-card">
+                <div class="showcase-content">
+                    <div class="showcase-badge">
+                        <svg class="icon" style="width: 14px; height: 14px; stroke: #d8b4fe !important;" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span>TECNOLOGÍA EXCLUSIVA</span>
+                    </div>
+                    <h3>Motor de Auto-Actualización en Caliente (Hot-Reloading)</h3>
+                    <p>
+                        ¿Modificaste tu código C++ o cambiaste offsets? <strong>No necesitas cerrar el juego, salir de la partida ni reiniciar el teléfono</strong>. El módulo <code>auto_updater.cpp</code> realiza un reemplazo atómico del binario en plena partida.
+                    </p>
+                    <ul class="showcase-list">
+                        <li><strong>Validación Previa en Sandbox</strong>: Prueba el nuevo binario en un subproceso hijo antes de tocar el servidor activo para evitar crasheos.</li>
+                        <li><strong>Traspaso Atómico de Socket</strong>: Transfiere el socket Unix <code>@memsvc</code> al nuevo proceso sin desconectar al cliente PC ni a la IA.</li>
+                        <li><strong>Tiempo de Transición</strong>: Menos de <strong>400 milisegundos</strong> manteniendo tu sesión intacta en Arena Breakout.</li>
+                    </ul>
+                </div>
+
+                <div class="showcase-terminal">
+                    <div class="showcase-terminal-head">
+                        <span style="color: var(--cyan); font-weight: 800;">⚡ AUTO_UPDATER DAEMON LOGS</span>
+                        <span style="color: var(--emerald); font-size: 0.75rem;">● LIVE HOT-RELOAD</span>
+                    </div>
+                    <div style="line-height: 1.8;">
+                        <span style="color: #64748b;">[00:48:12] [UPDATE]</span> Incoming update payload: mem_server_v2.sh<br>
+                        <span style="color: #64748b;">[00:48:12] [UPDATE]</span> Testing candidate binary in subprocess (fork)...<br>
+                        <span style="color: #10b981;">[00:48:12] [UPDATE]</span> Candidate binary validated OK (exit code 0)<br>
+                        <span style="color: #64748b;">[00:48:13] [UPDATE]</span> Atomic swap /data/local/tmp/mem_server.sh...<br>
+                        <span style="color: #a855f7;">[00:48:13] [UPDATE]</span> Transferring @memsvc abstract socket...<br>
+                        <span style="color: #00f0ff; font-weight: 700;">[00:48:13] [UPDATE] [+] HOT-RELOAD SUCCESSFUL (380ms)!</span><br>
+                        <span style="color: #38bdf8;">[00:48:13] [SYS] Game PID: 14250 remains attached & running.</span>
+                    </div>
                 </div>
             </div>
         </div>
